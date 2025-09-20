@@ -1,0 +1,59 @@
+@reference "../App.css";
+@layer components {
+  .carousel {
+    @apply relative bg-dark-shade shadow-2xl rounded-2xl;
+    @apply lg:[--indicator-width:1rem] lg:[--active-indicator-width:4rem]  
+    md:[--indicator-width:0.75rem] md:[--active-indicator-width:3rem]
+    [--indicator-width:0.5rem] [--active-indicator-width:2rem];
+
+    & > ul {
+      @apply flex h-full w-full overflow-x-scroll;
+      html:has(&.isDragging) * {
+        user-select: none;
+      }
+
+      & > li {
+        @apply w-full shrink-0;
+      }
+    }
+    & > .indicators-container {
+      @apply absolute left-0 right-0 bottom-5 flex flex-row items-center gap-[calc(1.5*var(--indicator-width))] w-full justify-center h-5;
+
+      & > div {
+        @apply h-[var(--indicator-width)] border-[0.1875rem] rounded-3xl bg-main-brand box-border transition-all duration-75 ease-in-out relative;
+
+        &::after {
+          @apply content-[""] absolute size-[calc(var(--indicator-width)*2.5)] inset-0 -left-[calc(0.75*var(--indicator-width))] m-auto;
+        }
+
+        &.active::after {
+          @apply w-[calc(var(--active-indicator-width)+1.5*var(--indicator-width))] -left-[calc(0.75*var(--indicator-width)+0.1875rem)];
+        }
+
+        &:not(.active) {
+          @apply cursor-pointer;
+
+          &:hover {
+            @apply w-[var(--active-indicator-width)]! border-[0.1875rem]! opacity-100! outline-[.125rem] outline-main-brand -outline-offset-[.1875rem] border-white/20;
+
+            &::after {
+              @apply w-[calc(var(--active-indicator-width)+1.5*var(--indicator-width))] -left-[calc(0.75*var(--indicator-width)+0.1875rem)];
+            }
+          }
+        }
+      }
+
+      &:has(:not(.active):hover) > div.active {
+        @apply w-[calc(var(--indicator-width))]! opacity-40!;
+
+        &::after {
+          @apply absolute size-[calc(var(--indicator-width)*2.5)] -left-[calc(0.75*var(--indicator-width)+.1875rem)];
+        }
+      }
+    }
+
+    &.\[\&\>\*\]\:cursor-wait > .control {
+      @apply opacity-40!;
+    }
+  }
+}

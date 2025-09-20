@@ -1,0 +1,37 @@
+@reference "../App.css";
+@layer components {
+  .timeline {
+    @apply mt-20;
+
+    .item {
+      @apply relative flex flex-col gap-4 md:gap-10 md:flex-row pl-20 md:pl-0 items-stretch pb-12;
+
+      & :nth-child(3) {
+        @apply flex-1;
+      }
+
+      & > :nth-child(2) {
+        @apply w-15 absolute left-0 top-0 h-full md:relative md:h-auto;
+
+        & > div {
+          @apply left-0 relative w-12 h-[calc(100%+1.5rem)] mx-auto;
+
+          & > div {
+            @apply size-12 bg-dark-accent rounded-full outline-3 outline-offset-4 outline-dark-accent outline-dashed
+            after:absolute after:right-0 after:left-0 after:top-13 after:mx-auto
+            after:border-l-4 after:border-dashed after:border-l-dark-accent after:w-1 after:h-[calc(100%-3.25rem)];
+          }
+        }
+      }
+
+      &:nth-child(even) > :nth-child(2) > div > div {
+        @apply bg-main-brand outline-main-brand
+             after:border-l-main-brand;
+      }
+
+      &:last-child > :nth-child(2) > div {
+        @apply h-full;
+      }
+    }
+  }
+}

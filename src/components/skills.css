@@ -1,0 +1,107 @@
+@reference "../App.css";
+.skills {
+  @apply bg-dark-shade text-white  
+  flex flex-col [--grid-gap:0] gap-4
+  lg:grid lg:grid-cols-2 lg:[--grid-gap:5rem] lg:gap-x-[var(--grid-gap)];
+
+  & div:nth-last-child(n + 3) h3 {
+    @apply lg:min-h-[var(--min-title-height)];
+  }
+
+  & ul {
+    /* @apply grid w-fit gap-8;
+    grid-template-columns: repeat(5, auto); */
+
+    @apply flex gap-8 flex-wrap;
+  }
+
+  & > div:has(> .last-row) {
+    @apply col-span-full;
+  }
+  & > div > .last-row ul {
+    @apply w-full flex flex-wrap;
+  }
+
+  & li {
+    --dropdown-transition-time: 500ms;
+    --fade-transition: 100ms;
+    & > div {
+      /* transition: all 200ms ease-in var(--fade-transition); */
+      .tooltip {
+        @apply opacity-1 text-[0px] w-0 h-0;
+        /* transition: all var(--fade-transition) ease-in; */
+        & > .close-tooltip {
+          @apply hidden;
+        }
+      }
+
+      .icon {
+        @apply cursor-pointer;
+
+        &:hover {
+          & .show-tooltip-icon {
+            @apply fill-light-accent;
+          }
+        }
+      }
+    }
+
+    &.open {
+      /* grid-row: 2;
+      grid-column: 1 / -1; */
+      @apply order-last;
+      & > div {
+        @apply flex flex-col   gap-5 px-5 py-8 items-center h-full  w-[var(--section-width)] ml-[var(--left-offset)] bg-light-shade 
+        rounded-sm  font-medium drop-shadow-xl drop-shadow-light-accent/25 overflow-hidden
+        md:flex-row md:gap-6 md:px-7 md:py-10
+        lg:gap-7 lg:px-9 lg:py-12;
+        transition: all var(--dropdown-transition-time) ease-in-out;
+        /* height var(--dropdown-transition-time) ease-in-out,
+          width var(--dropdown-transition-time) ease-in-out; */
+
+        & > .tooltip {
+          @apply text-base opacity-100 size-full;
+          transition: all var(--dropdown-transition-time) ease-in-out;
+
+          & > .close-tooltip {
+            @apply block;
+          }
+        }
+
+        .icon {
+          @apply cursor-default;
+
+          & .show-tooltip-icon {
+            @apply hidden;
+          }
+        }
+      }
+    }
+
+    &.animate {
+      & > div {
+        .icon .show-tooltip-icon {
+          animation: animate-skill-info 2s linear infinite;
+        }
+      }
+
+      &:hover {
+        & > div {
+          .icon .show-tooltip-icon {
+            animation: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes animate-skill-info {
+  0% {
+    fill: var(--color-white);
+  }
+
+  75% {
+    fill: var(--color-light-accent);
+  }
+}

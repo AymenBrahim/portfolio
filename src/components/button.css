@@ -1,0 +1,38 @@
+@reference "../App.css";
+@layer components {
+  .button {
+    @apply inline-block font-secondary font-black rounded-lg w-fit drop-shadow-lg;
+
+    @apply p-[0.875rem_1.25rem_0.75rem_1.125rem] text-sm;
+    @apply md:p-[1rem_1.375rem_0.875rem_1.25rem] md:text-base;
+    @apply lg:p-[1.125rem_1.4544rem_1rem_1.4206rem] lg:text-lg;
+
+    &:hover {
+      @apply outline-1;
+    }
+
+    &.primary {
+      @apply bg-main-brand text-white;
+
+      &:hover {
+        @apply outline-main-brand/75;
+      }
+    }
+
+    &.secondary {
+      @apply bg-dark-accent text-white;
+
+      &:hover {
+        @apply outline-dark-accent/75;
+      }
+    }
+
+    &.tertiary {
+      @apply border-1 border-white/30 bg-transparent;
+
+      &:hover {
+        @apply outline-white/60;
+      }
+    }
+  }
+}

@@ -1,42 +1,352 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+@import url("https://fonts.googleapis.com/css2?family=Martel+Sans:wght@200;300;400;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import "tailwindcss";
+@font-face {
+  font-family: "Ruda";
+  src: url("/fonts/Ruda-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 900;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/CormorantGaramond-VariableFont_wght.ttf") format("truetype");
+  font-optical-sizing: auto;
+  font-weight: 300 700;
+  font-style: normal;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+@font-face {
+  font-family: "Martel Sans";
+  src: url("/fonts/MartelSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+@font-face {
+  font-family: "Martel Sans";
+  src: url("/fonts/MartelSans-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+:root {
+  --header-height: 5rem;
+}
+
+@media (pointer: coarse) or (max-width: 640px) {
+  :root {
+    --header-height: 5rem;
   }
-  to {
-    transform: rotate(360deg);
+}
+
+@theme {
+  --color-*: initial;
+
+  --color-white: #ffffff;
+  --color-beige: #dbb6ab;
+  --color-light-beige: #fdf0e9;
+  --color-blue: #28293e;
+  --color-blue-100: #d4d4d8;
+  --color-blue-200: #a9a9b2;
+  --color-blue-300: #7e7f8b;
+  --color-blue-400: #535465;
+  --color-blue-500: #28293e;
+  --color-blue-600: #202132;
+  --color-blue-700: #181925;
+  --color-blue-800: #101019;
+  --color-blue-900: #08080c;
+
+  --color-orange: #ef6d58;
+  --color-orange-100: #fce2de;
+  --color-orange-200: #f9c5bc;
+  --color-orange-300: #f5a79b;
+  --color-orange-400: #f28a79;
+  --color-orange-500: #ef6d58;
+  --color-orange-600: #bf5746;
+  --color-orange-700: #8f4135;
+  --color-orange-800: #602c23;
+  --color-orange-900: #301612;
+
+  --color-brown: #391400;
+  --color-brown-100: #d7d0cc;
+  --color-brown-200: #b0a199;
+  --color-brown-300: #887266;
+  --color-brown-400: #614333;
+  --color-brown-500: #391400;
+  --color-brown-600: #2e1000;
+  --color-brown-700: #220c00;
+  --color-brown-800: #170800;
+  --color-brown-900: #0b0400;
+
+  --color-purple: #b550f8;
+  --color-purple-100: #f0dcfe;
+  --color-purple-200: #e1b9fc;
+  --color-purple-300: #d396fb;
+  --color-purple-400: #c473f9;
+  --color-purple-500: #b550f8;
+  --color-purple-600: #9140c6;
+  --color-purple-700: #6d3095;
+  --color-purple-800: #482063;
+  --color-purple-900: #241032;
+
+  --color-brown: #390000;
+  --color-pink: #cc4876;
+  --color-cyan: #7ac1c9;
+
+  --color-white: #ffffff;
+  --color-orange: #ef6d58;
+  --color-purple: #b550f8;
+
+  --color-beige: #dbb6ab;
+  --color-light-beige: #fdf0e9;
+  /* original palette */
+  --color-light-shade: #f8f9ff;
+  --color-light-accent: #8eacc0;
+  --color-main-brand: #009379;
+  --color-dark-accent: #ce4573;
+  --color-dark-shade: #28293e;
+
+  /* generated colors */
+
+  --color-light-shade: #f8f8f8;
+  --color-header-shade: #f0f0f2;
+  --color-light-accent: #e29bb3;
+  --color-main-brand: #1da28a;
+  --color-dark-accent: #cf4871;
+  --color-dark-shade: #2d2b43;
+
+  --animate-fade-in-scale: fade-in-scale 0.3s ease-out;
+
+  --font-primary: "Martel Sans", sans-serif;
+  --font-secondary: "Ruda", sans-serif;
+  --font-tertiary: "Cormorant Garamond", serif;
+
+  --animate-gradient: gradient-move 6s linear infinite;
+  @keyframes gradient-move {
+    0% {
+      background-position: 0%;
+    }
+    to {
+      background-position: -200%;
+    }
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+@layer base {
+  html {
+    scroll-margin: var(--header-height);
+  }
+
+  body {
+    @apply text-dark-shade font-primary bg-light-shade;
+  }
+
+  main {
+    @apply h-full mx-auto;
+  }
+
+  main > section {
+    --section-width: calc(100vw - (var(--section-horizontal-padding) * 2));
+    @apply lg:[--section-vertical-padding:var(--header-height)] md:[--section-vertical-padding:4rem] [--section-vertical-padding:3rem];
+    @apply xl:[--section-horizontal-padding:calc(max(calc((100vw-var(--breakpoint-2xl))/2),8.5rem))] lg:[--section-horizontal-padding:4.5rem] md:[--section-horizontal-padding:3rem] [--section-horizontal-padding:1.25rem];
+
+    @apply w-full
+      py-[var(--section-vertical-padding)] px-[var(--section-horizontal-padding)];
+
+    &:first-child {
+      @apply min-h-[calc(100vh-var(--header-height))] py-0 mt-[var(--header-height)] pointer-coarse:min-h-screen sm:pointer-coarse:mt-[4.125rem] pointer-coarse:mt-5;
+    }
+
+    &.bg-dark-shade {
+      @apply text-light-shade;
+
+      & p {
+        @apply text-light-shade/80;
+      }
+
+      & :is(h2) {
+        @apply font-extrabold font-secondary text-shadow-xs text-shadow-dark-accent;
+      }
+    }
+
+    & :is(h2) {
+      @apply font-extrabold font-secondary text-shadow-xs text-shadow-light-accent;
+    }
+  }
+
+  input,
+  textarea,
+  button,
+  select {
+    font-family: inherit;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    @apply font-extrabold font-secondary;
+  }
+
+  h1 {
+    font-size: 4.5rem;
+    line-height: 5rem;
+    letter-spacing: -0.125rem;
+    margin-bottom: 2.5rem;
+  }
+
+  h2 {
+    font-size: 3.5rem;
+    line-height: 4rem;
+    letter-spacing: -0.0625rem;
+    margin-bottom: 2rem;
+  }
+  h3 {
+    font-size: 2.5rem;
+    line-height: 3rem;
+    margin-bottom: 1.5rem;
+  }
+
+  h4 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 2rem;
+    margin-bottom: 1.25rem;
+  }
+  h5 {
+    @apply font-tertiary font-bold;
+    font-size: 1rem;
+    line-height: 2rem;
+    letter-spacing: 0.1875rem;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 1rem;
+    line-height: 2rem;
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 1024px) {
+    h1 {
+      font-size: 3.5rem;
+      line-height: 4rem;
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      font-size: 2.75rem;
+      line-height: 3.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h3 {
+      font-size: 2rem;
+      line-height: 2.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    h4 {
+      font-size: 1.25rem;
+      line-height: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    h5 {
+      font-size: 0.9375rem;
+      line-height: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    p {
+      margin-top: 0.875rem;
+      font-size: 0.9375rem;
+      line-height: 1.75rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    h1 {
+      font-size: 2.5rem;
+      line-height: 3rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+      line-height: 2.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      line-height: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    h4 {
+      font-size: 1.125rem;
+      line-height: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    h5 {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin-top: 0.75rem;
+      font-size: 0.875rem;
+      line-height: 1.5rem;
+    }
   }
 }
 
-.card {
-  padding: 2em;
+@layer utility {
+  .no-scrollbar {
+    @apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+  }
 }
 
-.read-the-docs {
-  color: #888;
+@layer components {
+  .with-bottom-separator {
+    border-image: linear-gradient(
+        90deg,
+        var(--color-light-shade) 10%,
+        var(--color-light-accent) 40%,
+        var(--color-light-accent) 60%,
+
+        var(--color-light-shade) 90%
+      )
+      1;
+    border-bottom: 0.25rem solid;
+  }
+
+  .rainbow-text {
+    background: linear-gradient(
+      270deg,
+      #ff4e33,
+      #a04cff,
+      #00c2b5,
+      #a04cff,
+      #ff4e33
+    );
+    background-size: 200% 100%;
+
+    @apply drop-shadow-sm bg-clip-text animate-gradient text-transparent;
+  }
+
+  ul.technologies {
+    @apply flex gap-2.5 mt-6 flex-wrap;
+
+    & > li {
+      @apply text-main-brand bg-main-brand/20 border-main-brand/30
+      py-1 px-2 text-xs font-bold rounded-xl;
+    }
+  }
 }

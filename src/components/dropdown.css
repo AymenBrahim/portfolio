@@ -1,0 +1,67 @@
+.dropdown.active > :first-child {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  backdrop-filter: blur(5px);
+
+  transition: all 500ms ease-in-out;
+}
+
+.light .dropdown.active > :first-child {
+  mix-blend-mode: color-burn;
+}
+
+.dark .dropdown.active > :first-child {
+  mix-blend-mode: color-dodge;
+}
+
+.dropdown > div:nth-child(2) {
+  transition: all 500ms ease-out;
+}
+
+.dropdown.active > div:nth-child(2) {
+  max-height: 2000px;
+  transition: all 500ms ease-in;
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.dropdown .icon {
+  position: absolute;
+  right: 10px;
+  top: calc(50% - 10px);
+  width: 20px;
+  height: 20px;
+}
+
+.dropdown .icon::after,
+.dropdown .icon::before {
+  content: "";
+  position: absolute;
+  transform-origin: 50% 50%;
+  inset: 0;
+  top: calc(50% - 1px);
+  height: 3px;
+  width: 100%;
+  border-radius: 10px;
+  background: hsl(var(--foreground));
+  transition: all 200ms ease-in-out;
+}
+
+.dropdown .icon::before {
+  transform: rotate(90deg);
+}
+.icon::after {
+  transform: scale(1);
+}
+
+.dropdown.active .icon::before {
+  transform: rotate(0deg);
+}
+
+.dropdown.active .icon::after {
+  transform: scale(0);
+}
+
+.dropdown .body {
+  pointer-events: painted;
+}
