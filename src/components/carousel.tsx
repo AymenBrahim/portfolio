@@ -1,6 +1,5 @@
 import {
   useCallback,
-  useState,
   type HTMLAttributes,
   type ReactNode,
   type RefObject,
@@ -13,7 +12,6 @@ import {
 } from "../hooks/use-carousel";
 import { animated, SpringValue } from "@react-spring/web";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import useOnWindowResize from "../hooks/use-on-resize";
 
 type CarouselProps = HTMLAttributes<HTMLUListElement> & {
   pages: ReactNode[];
@@ -92,7 +90,6 @@ export function NavigationIndicators({
     <div className={"indicators-container"}>
       {Array.from({ length: pageCount }).map((_, i) => (
         <Indicator
-          carouselRef={carouselRef}
           currentPage={page}
           page={i}
           key={`indicator${i}`}
@@ -107,10 +104,9 @@ type IndicatorProps = {
   currentPage: SpringValue<number>;
   page: number;
   onClick: () => void;
-} & Pick<CarouselProps, "carouselRef">;
+};
 function Indicator(props: IndicatorProps) {
-  const { currentPage, page, onClick, carouselRef } = props;
-  const [indicatorWidth, activeIndicatorWidth] = useIndicatorWidth(carouselRef);
+  const { currentPage, page, onClick } = props;
   return (
     <animated.div
       onClick={onClick}
@@ -130,7 +126,7 @@ function Indicator(props: IndicatorProps) {
         }),
         width: currentPage.to({
           range: [page - 1, page, page + 1],
-          output: [indicatorWidth, activeIndicatorWidth, indicatorWidth],
+          output: ["0.75rem", "3rem", "0.75rem"],
           extrapolate: "clamp",
         }),
         opacity: currentPage.to({
@@ -141,35 +137,6 @@ function Indicator(props: IndicatorProps) {
       }}
     />
   );
-}
-
-function useIndicatorWidth(ref: CarouselProps["carouselRef"]) {
-  const [indicatorWidth, setIndicatorWidth] = useState("1rem");
-  const [activeIndicatorWidth, setActiveIndicatorWidth] = useState("4rem");
-
-  function setWidths() {
-    if (!ref.current) {
-      return;
-    }
-
-    setIndicatorWidth(
-      getComputedStyle(ref.current).getPropertyValue("--indicator-width")
-    );
-
-    setActiveIndicatorWidth(
-      getComputedStyle(ref.current).getPropertyValue("--active-indicator-width")
-    );
-  }
-  useOnWindowResize(setWidths, { onInit: setWidths });
-  /* const indicatorWidth = ref.current
-    ? getComputedStyle(ref.current!).getPropertyValue("--indicator-width")
-    : ;
-  const activeIndicatorWidth = ref.current
-    ? getComputedStyle(ref.current!).getPropertyValue(
-        "--active-indicator-width"
-      )
-    : "4rem"; */
-  return [indicatorWidth, activeIndicatorWidth] as const;
 }
 
 type NextPrevPageProps = {

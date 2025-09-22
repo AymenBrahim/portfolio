@@ -2,10 +2,7 @@
 @layer components {
   .carousel {
     @apply relative bg-dark-shade shadow-2xl rounded-2xl;
-    @apply lg:[--indicator-width:1rem] lg:[--active-indicator-width:4rem]  
-    md:[--indicator-width:0.75rem] md:[--active-indicator-width:3rem]
-    [--indicator-width:0.5rem] [--active-indicator-width:2rem];
-
+    @apply [--indicator-width:0.75rem] [--active-indicator-width:3rem];
     & > ul {
       @apply flex h-full w-full overflow-x-scroll;
       html:has(&.isDragging) * {
@@ -17,7 +14,7 @@
       }
     }
     & > .indicators-container {
-      @apply absolute left-0 right-0 bottom-5 flex flex-row items-center gap-[calc(1.5*var(--indicator-width))] w-full justify-center h-5;
+      @apply absolute left-0 right-0 bottom-5 flex flex-row items-center gap-[calc(1.5*var(--indicator-width))] w-full justify-center h-5 z-2;
 
       & > div {
         @apply h-[var(--indicator-width)] border-[0.1875rem] rounded-3xl bg-main-brand box-border transition-all duration-75 ease-in-out relative;

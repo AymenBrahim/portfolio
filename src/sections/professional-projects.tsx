@@ -29,6 +29,7 @@ export default function ProfessionalProjects({
       className={twMerge(
         "[--projects-map-width:30%] md:[--projects-map-width:328px] ",
         "[&:has(.carousel_.isDragging)_.projects-map]:opacity-100 [&>.carousel>ul.isDragging>.page]:opacity-10",
+        "duration-0",
         "text-balance",
         className
       )}
@@ -39,7 +40,7 @@ export default function ProfessionalProjects({
         pages={[
           ...professionalProjectsData.map((project) => (
             <Project
-              className="md:pr-[var(--projects-map-width)] z-2 duration-200"
+              className="md:pr-[var(--projects-map-width)] z-2"
               {...project}
             />
           )),
@@ -60,7 +61,7 @@ export default function ProfessionalProjects({
         <ProjectsMap
           className={
             "projects-map pointer-events-none h-[calc(100%-4rem)] w-full mb-5 inset-0 0 opacity-5 absolute" +
-            " md:w-[var(--projects-map-width)] md:top-0 md:bottom-0 md:right-0 md:h-full md:left-auto md:opacity-100 " +
+            " md:w-[var(--projects-map-width)] md:top-0 md:bottom-0 md:right-0 md:h-full md:left-auto md:opacity-100" +
             " m-auto text-main-brand  fill-main-brand select-none map rounded-2xl z-1"
           }
           carouselRef={carouselRef}
