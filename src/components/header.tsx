@@ -94,6 +94,7 @@ async function onClick(e: React.MouseEvent<HTMLUListElement, MouseEvent>) {
   const headerOffset = remToPx(headerOffsetInRem);
   if (index === -1) {
     const section = document.getElementById(id)!;
+    closeSideBar(e.currentTarget);
     await scrollAsync(
       window.scrollY + section.getBoundingClientRect().top - headerOffset,
       400,
@@ -105,14 +106,13 @@ async function onClick(e: React.MouseEvent<HTMLUListElement, MouseEvent>) {
         })
     );
 
-    /* window.location.hash = "#" + id; */
     return;
   }
 
   const professionalProjectsSection = document.getElementById(
     "professional-projects"
   )!;
-
+  closeSideBar(e.currentTarget);
   await scrollAsync(
     window.scrollY +
       professionalProjectsSection.getBoundingClientRect().top -
@@ -131,39 +131,19 @@ async function onClick(e: React.MouseEvent<HTMLUListElement, MouseEvent>) {
   )!.parentElement!.parentElement!;
 
   const carouselWidth = carouselContainer.getBoundingClientRect().width;
-  /* await scrollAsync(
-    index * carouselWidth,
-    200,
-    container.scrollLeft,
-    (value) => (container.scrollLeft = value)
-  ); */
-  /* await scrollAsync(
-    window.scrollY +
-      professionalProjectsSection.getBoundingClientRect().top -
-      headerOffset,
-    200,
-    window.scrollY,
-    (scroll: number) =>
-      window.scrollTo({
-        top: scroll,
-        behavior: "instant",
-      })
-  ); */
+
   await scrollAsync(
     index * carouselWidth,
     250,
     carouselContainer.scrollLeft,
-    (value) =>
-      (carouselContainer.scrollLeft =
-        value) /*  professionalProjectsSection.scrollTo(
-        {
-          left: 2000,
-          behavior: "instant",
-        }
-      ) */
+    (value) => (carouselContainer.scrollLeft = value)
   );
+}
 
-  /* window.location.hash = "#" + id; */
+function closeSideBar(element: HTMLElement) {
+  if (element.classList.contains("expanded")) {
+    element.classList.remove("expanded");
+  }
 }
 
 function NavigationItem(props: NavigationItem) {
