@@ -2,7 +2,7 @@
 .skills {
   @apply bg-dark-shade text-white  
   flex flex-col [--grid-gap:0] gap-4
-  lg:grid lg:grid-cols-2 lg:[--grid-gap:5rem] lg:gap-x-[var(--grid-gap)];
+  lg:grid lg:grid-cols-2 lg:[--grid-gap:5rem] lg:gap-x-[var(--grid-gap)] overflow-hidden;
 
   & div:nth-last-child(n + 3) h3 {
     @apply lg:min-h-[var(--min-title-height)];
@@ -14,7 +14,9 @@
 
     @apply flex gap-8 flex-wrap;
   }
-
+  & > div > .with-offset {
+    @apply [--left-offset:calc(-50%-var(--grid-gap))];
+  }
   & > div:has(> .last-row) {
     @apply col-span-full;
   }

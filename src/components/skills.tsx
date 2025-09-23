@@ -92,7 +92,13 @@ type RowProps = Omit<SkillRow, "title"> &
 function Row({ skills, rowIndex, ...tooltipsProps }: RowProps) {
   const lastRow = rowIndex === skillsData.length - 1;
   return (
-    <div className={"flex gap-8" + (lastRow ? " last-row" : "")}>
+    <div
+      className={twMerge(
+        "flex gap-8",
+        lastRow ? " last-row" : "",
+        rowIndex % 2 === 1 && !lastRow && "with-offset"
+      )}
+    >
       <ul>
         {skills.map((skill, i) => (
           <Icon
