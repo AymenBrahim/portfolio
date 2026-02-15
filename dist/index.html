@@ -1,19 +1,22 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-6L21VHV2MQ"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/site.webmanifest" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aymen Brahim</title>
-  <script>
+      gtag("config", "G-6L21VHV2MQ");
+    </script>
+    <script>
       (function () {
         const theme = localStorage.getItem("theme-preference") || "system";
         const resolved =
@@ -22,21 +25,32 @@
               ? "dark"
               : "light"
             : theme;
-            console.log(resolved)
         document.documentElement.classList.add(resolved);
       })();
     </script>
+    
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
-  <script type="module" crossorigin src="/assets/index-BxdlOg6g.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-D4f_lyqa.css">
-</head>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 
-<body>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
-  <div id="root"></div>
-  <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif?collect-dnt=true" alt=""
-      referrerpolicy="no-referrer-when-downgrade" /></noscript>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aymen Brahim</title>
+    
+    <script type="module" crossorigin src="/assets/index-BxdlOg6g.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D4f_lyqa.css">
+  </head>
 
-</body>
-
+  <body>
+    <div id="root"></div>
+    <noscript
+      ><img
+        src="https://queue.simpleanalyticscdn.com/noscript.gif?collect-dnt=true"
+        alt=""
+        referrerpolicy="no-referrer-when-downgrade"
+    /></noscript>
+  </body>
 </html>
