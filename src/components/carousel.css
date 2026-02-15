@@ -1,56 +1,147 @@
 @reference "../App.css";
 @layer components {
+  html:has(&.is-dragging) * {
+    user-select: none;
+  }
   .carousel {
-    @apply relative bg-dark-shade shadow-2xl rounded-2xl;
-    @apply [--indicator-width:0.75rem] [--active-indicator-width:3rem];
+    @apply overflow-x-visible cursor-grab relative;
+    --indicator-width: 0.75rem;
+    --active-indicator-width: 3rem;
+
     & > ul {
-      @apply flex h-full w-full overflow-x-scroll;
-      html:has(&.isDragging) * {
-        user-select: none;
+      @apply flex flex-row size-full overflow-x-scroll pb-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
+      pointer-coarse:snap-x pointer-coarse:snap-mandatory pointer-fine:scroll-auto scroll-smooth will-change-scroll;
+
+      &.is-dragging *,
+      &.is-dragging {
+        @apply cursor-grabbing select-none;
+      }
+
+      &.is-scrolling * {
+        @apply cursor-wait;
+      }
+
+      &:has(a[href]:hover) {
+        @apply cursor-pointer;
       }
 
       & > li {
-        @apply w-full shrink-0;
+        flex: 0 0 100%;
+        @apply flex pointer-coarse:snap-always pointer-coarse:snap-center ease-out;
       }
     }
+
     & > .indicators-container {
-      @apply absolute left-0 right-0 bottom-5 flex flex-row items-center gap-[calc(1.5*var(--indicator-width))] w-full justify-center h-5 z-2;
+      @apply absolute left-0 right-0  flex flex-row items-center gap-[calc(1.5*var(--indicator-width))] w-full justify-center h-5 z-2;
+      bottom: calc((2.5rem) / 2 - 0.65rem);
 
       & > div {
-        @apply h-[var(--indicator-width)] border-[0.1875rem] rounded-3xl bg-main-brand box-border transition-all duration-75 ease-in-out relative;
+        @apply h-[var(--indicator-width)]  rounded-3xl border-teal-400 border-1 bg-teal box-border outline-teal-700 outline-solid outline-1 relative;
 
         &::after {
           @apply content-[""] absolute size-[calc(var(--indicator-width)*2.5)] inset-0 -left-[calc(0.75*var(--indicator-width))] m-auto;
         }
 
-        &.active::after {
-          @apply w-[calc(var(--active-indicator-width)+1.5*var(--indicator-width))] -left-[calc(0.75*var(--indicator-width)+0.1875rem)];
+        &.active {
+          @apply border-1;
+          &::after {
+            @apply w-[calc(var(--active-indicator-width)+1.5*var(--indicator-width))] -left-[calc(0.75*var(--indicator-width)+0.1875rem)];
+          }
         }
+        @media (hover: hover) {
+          &:not(.active) {
+            @apply cursor-pointer;
 
-        &:not(.active) {
-          @apply cursor-pointer;
+            &:hover {
+              @apply w-[var(--active-indicator-width)]!  opacity-100! outline-1!;
 
-          &:hover {
-            @apply w-[var(--active-indicator-width)]! border-[0.1875rem]! opacity-100! outline-[.125rem] outline-main-brand -outline-offset-[.1875rem] border-white/20;
-
-            &::after {
-              @apply w-[calc(var(--active-indicator-width)+1.5*var(--indicator-width))] -left-[calc(0.75*var(--indicator-width)+0.1875rem)];
+              &::after {
+                @apply w-[calc(var(--active-indicator-width)+1.5*var(--indicator-width))] -left-[calc(0.75*var(--indicator-width)+0.1875rem)];
+              }
             }
           }
         }
       }
+      @media (hover: hover) {
+        &:has(:not(.active):hover) > div.active {
+          @apply w-[calc(var(--indicator-width))]! opacity-40!;
 
-      &:has(:not(.active):hover) > div.active {
-        @apply w-[calc(var(--indicator-width))]! opacity-40!;
-
-        &::after {
-          @apply absolute size-[calc(var(--indicator-width)*2.5)] -left-[calc(0.75*var(--indicator-width)+.1875rem)];
+          &::after {
+            @apply absolute size-[calc(var(--indicator-width)*2.5)] -left-[calc(0.75*var(--indicator-width)+.1875rem)];
+          }
         }
       }
     }
 
-    &.\[\&\>\*\]\:cursor-wait > .control {
-      @apply opacity-40!;
+    & > .control {
+      @apply cursor-pointer absolute top-0 bottom-0 text-teal my-auto size-12;
+
+      & > svg {
+        @apply size-full;
+      }
+
+      &.previous {
+        @apply -left-16;
+        & > svg {
+          @apply rotate-180;
+        }
+      }
+
+      &.next {
+        @apply -right-16;
+      }
+
+      &.disabled {
+        @apply opacity-50 cursor-not-allowed;
+      }
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .carousel {
+      @apply mx-6;
+      & > .control {
+        @apply size-12;
+
+        &.previous {
+          @apply -left-12;
+        }
+
+        &.next {
+          @apply -right-12;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 640px) {
+    .carousel {
+      @apply mx-5;
+      & > .control {
+        @apply size-8;
+
+        &.previous {
+          @apply -left-8;
+        }
+
+        &.next {
+          @apply -right-8;
+        }
+      }
+    }
+  }
+  html.dark {
+    .carousel {
+      @apply relative  [--indicator-width:0.75rem] [--active-indicator-width:3rem];
+
+      & > .indicators-container {
+        & > div {
+          @apply rounded-3xl border-teal-300 border-1 bg-teal-400 outline-teal-600;
+        }
+      }
+      & > .control {
+        @apply text-teal-400;
+      }
     }
   }
 }

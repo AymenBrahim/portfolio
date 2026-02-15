@@ -7,7 +7,7 @@ export function getCSSVariableValue(variable: string) {
 
 export function remToPx(rem: number): number {
   const rootFontSize = parseFloat(
-    getComputedStyle(document.documentElement).fontSize
+    getComputedStyle(document.documentElement).fontSize,
   );
   return rem * rootFontSize;
 }
@@ -20,7 +20,7 @@ export function useDialogue() {
 
   return {
     Dialog: () => (
-      <dialog ref={dialogRef} className="backdrop:bg-dark-shade/90 ">
+      <dialog ref={dialogRef} className="backdrop:bg-foreground/90 ">
         <button autoFocus onClick={() => dialogRef.current?.close()}>
           Close
         </button>
@@ -44,7 +44,7 @@ export function mapValue(
   x1: number,
   x2: number,
   y1: number,
-  y2: number
+  y2: number,
 ) {
   return y1 + ((y2 - y1) / (x2 - x1)) * (x - x1);
 }
@@ -58,32 +58,43 @@ export function calculateAngle(x1: number, y1: number, x2: number, y2: number) {
 
   return angleDegrees;
 }
-
-export async function scrollAsync(
+export async function animateValue(
   targetValue: number,
   duration: number,
   startValue: number,
-  updateValue: (newVlaue: number) => void,
-  easingFn: (x: number) => number = (x) =>
-    x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2
+  updateValue: (value: number) => void,
+  easingFn: (x: number) => number = (x) => 1 - Math.pow(1 - x, 3),
 ): Promise<void> {
+  let id: number | null = null;
+
   return new Promise((resolve) => {
+    if (duration <= 0) {
+      updateValue(targetValue);
+      resolve();
+      return;
+    }
+
     const distance = targetValue - startValue;
-
-    const startTime = performance.now();
-
-    const step = (now: number) => {
-      const elapsed = now - startTime;
+    let startTimestamp: number | null = null;
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      if (id) {
+        return;
+      }
+      id = null;
+      const elapsed = timestamp - startTimestamp;
       const progress = Math.min(elapsed / duration, 1);
-
-      // Ease in-out cubic
       const easedProgress = easingFn(progress);
 
-      updateValue(startValue + distance * easedProgress);
+      const currentValue = startValue + distance * easedProgress;
+      updateValue(currentValue);
 
       if (progress < 1) {
         requestAnimationFrame(step);
       } else {
+        if (currentValue !== targetValue) {
+          updateValue(targetValue);
+        }
         resolve();
       }
     };
@@ -91,10 +102,17 @@ export async function scrollAsync(
     requestAnimationFrame(step);
   });
 }
-
 export function formatMonthYear(date: Date) {
   return date.toLocaleString("en-US", {
     month: "short",
     year: "numeric",
   });
+}
+
+export function isSameDay(d1: Date, d2: Date): boolean {
+  return (
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate()
+  );
 }

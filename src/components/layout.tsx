@@ -9,6 +9,7 @@ export default function Layout({ children }: { children: Section[] }) {
       <Header />
       <main>{children}</main>
       <footer></footer>
+      <div className="global-bubble"></div>
     </>
   );
 }

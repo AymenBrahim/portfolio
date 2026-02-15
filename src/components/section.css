@@ -1,0 +1,78 @@
+@reference "../App.css";
+@layer components {
+  main > section {
+    &:first-child {
+      margin-top: var(--header-height);
+
+      > div {
+        min-height: calc(100vh - var(--header-height));
+      }
+    }
+  }
+  section {
+    @apply mt-12;
+    & > header {
+      @apply flex flex-col justify-between;
+
+      & > h5 {
+        @apply self-end mb-6;
+      }
+    }
+
+    & > p {
+      @apply text-foreground/80;
+    }
+
+    &:has(> :nth-child(2):hover) > header > h5::before {
+      @apply w-full;
+    }
+  }
+  @media (max-width: 1024px) {
+    main > section {
+      &:first-child {
+        margin-top: var(--header-height);
+
+        > div {
+          min-height: unset;
+        }
+      }
+    }
+
+    main > section {
+      @apply mt-8;
+
+      & > header {
+        & > h5 {
+          @apply mb-3;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 640px) {
+    main section {
+      @apply mt-6;
+
+      & > header {
+        & > h5 {
+          @apply mb-2;
+        }
+      }
+    }
+  }
+
+  html.dark {
+    section {
+      & > header {
+        @apply flex gap-4 justify-between;
+        & > h5 {
+          @apply shrink;
+        }
+      }
+
+      & > p {
+        @apply text-beige-200/75;
+      }
+    }
+  }
+}

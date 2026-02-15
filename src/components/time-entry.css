@@ -1,0 +1,14 @@
+@reference "../App.css";
+time.time-entry {
+  @apply flex gap-1 items-center  font-tertiary tracking-tight text-foreground/65 leading-none;
+  font-size: 0.85em;
+  & > span {
+    @apply align-middle;
+  }
+}
+
+html.dark {
+  time.time-entry {
+    @apply text-beige-200/65;
+  }
+}

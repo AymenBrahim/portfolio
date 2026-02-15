@@ -1,0 +1,147 @@
+@reference "../App.css";
+@layer components {
+  .professional-project {
+    @apply h-full w-full flex flex-col items-center relative gap-12;
+
+    & > header {
+      h5 {
+        @apply block mb-0 size-fit h-min;
+      }
+
+      h5 + * {
+        @apply mt-0;
+      }
+
+      @apply flex flex-row flex-wrap gap-y-8 gap-x-6 justify-between;
+
+      & > * {
+        @apply flex flex-col gap-4;
+      }
+
+      & > .details {
+        @apply flex flex-row gap-6  min-w-fit;
+        flex: 1 0 calc(50% - 1.5rem);
+        & > .logo {
+          @apply flex size-28 items-center rounded-md bg-white/20 shrink-0 overflow-hidden ring-1 ring-beige-700/40 shadow-md ml-1 mt-1;
+        }
+
+        & > .info {
+          @apply h-fit flex flex-col gap-6  my-auto;
+
+          h3 {
+            @apply mb-0 font-bold tracking-tight self-end;
+          }
+          .time-entry {
+            @apply mt-0 align-middle;
+          }
+        }
+      }
+      & > .employer {
+        @apply my-auto;
+        flex: 0 1 fit-content;
+        &:hover > h5::before {
+          @apply w-full;
+        }
+
+        & > .logo > img {
+          @apply h-8 self-start;
+        }
+      }
+
+      & > .role {
+        @apply w-min shrink grow;
+
+        & > h4 {
+          @apply text-foreground/85 font-medium font-tertiary tracking-tight leading-none w-fit;
+        }
+        flex: 0 1 fit-content;
+      }
+
+      & > .technologies {
+        flex: 1 0 calc(50% - 1.5rem);
+      }
+    }
+
+    & > .mini-card {
+      @apply mx-1;
+      & > p {
+        @apply leading-relaxed;
+      }
+    }
+  }
+  @media (max-width: 1024px) {
+    .professional-project {
+      @apply p-px box-border;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .professional-project {
+      @apply gap-6;
+
+      & > header {
+        @apply gap-6;
+
+        & > * {
+          @apply gap-2;
+        }
+
+        & > .details {
+          @apply flex flex-row gap-6  min-w-fit;
+
+          & > .info {
+            @apply gap-3;
+          }
+          & > .logo {
+            @apply size-15 rounded-sm mt-px ml-px;
+          }
+        }
+        & > .employer {
+          & > .logo > img {
+            @apply h-5;
+          }
+        }
+      }
+
+      & > .mini-card {
+        @apply m-0 border-0 shadow-none outline-0 ring-0 p-0 bg-transparent;
+        &::after {
+          @apply hidden;
+        }
+        & > p {
+          @apply font-normal text-foreground;
+        }
+      }
+    }
+  }
+
+  html.dark {
+    .professional-project {
+      @apply text-beige-200;
+
+      & > header {
+        & > .details {
+          & > .logo {
+            @apply bg-beige-300/5  ring-beige-300/20 shadow-beige-200/10;
+          }
+        }
+
+        & > .role {
+          & > h4 {
+            @apply text-beige-200/80;
+          }
+        }
+      }
+      @media (max-width: 640px) {
+        & > .mini-card {
+          @apply bg-transparent;
+
+          & > p {
+            @apply text-beige-200;
+            font-size: 1em;
+          }
+        }
+      }
+    }
+  }
+}

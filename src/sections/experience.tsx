@@ -1,16 +1,20 @@
 import type { HTMLAttributes } from "react";
 import Timeline from "../components/timeline";
-import { FaRegCalendar } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { twMerge } from "tailwind-merge";
 import { experiences, type Experience } from "../data";
-import { formatMonthYear } from "../utils";
 import Link from "../components/link";
-
+import "./experience.css";
+import TimeEntry from "../components/time-entry";
+import Section from "../components/section";
 export default function Experience(props: HTMLAttributes<HTMLDivElement>) {
   return (
-    <section {...props} className={twMerge("bg-dark-shade", props.className)}>
-      <h2>Professional Timeline</h2>
+    <Section
+      {...props}
+      className={twMerge("experience", props.className)}
+      headline="Professional Timeline"
+      deck="Delivering scalable solutions across roles and teams"
+    >
       <div>
         <Timeline.Container>
           {experiences.map((experience, i) => (
@@ -22,40 +26,45 @@ export default function Experience(props: HTMLAttributes<HTMLDivElement>) {
           ))}
         </Timeline.Container>
       </div>
-    </section>
+    </Section>
   );
 }
 
 function FirstColumn({
   startDate,
+  companyLogo,
   endDate,
   location,
+  role,
   companyHref,
-  companyName,
 }: Experience) {
   return (
-    <div>
-      <Link href={companyHref} className="mb-4">
-        <h3 className="m-0">{companyName}</h3>
-      </Link>
-      <h4 className="text-xl font-tertiary">
-        <FaRegCalendar className="inline mr-1 align-baseline" />
-        {formatMonthYear(startDate)} - {formatMonthYear(endDate)}
-      </h4>
-      {location && (
-        <h4 className="text-xl font-tertiary mt-2">
-          <FaLocationDot className="inline mr-1 align-baseline" />
-          {location}
-        </h4>
-      )}
+    <div className="first-col">
+      <a href={companyHref}>{companyLogo}</a>
+      <div>
+        {role && <h4>{role}</h4>}
+        {location && (
+          <address className="with-hr-prefix">
+            <FaLocationDot />
+            {location}
+          </address>
+        )}
+        <TimeEntry startDate={startDate} endDate={endDate} />
+      </div>
     </div>
   );
 }
 
-function SecondColumn({ role, description }: Experience) {
+function SecondColumn({ companyHref, description, companyName }: Experience) {
   return (
-    <div>
-      {role && <h3 className="mt-0 mb-4">{role}</h3>}
+    <div className="second-col">
+      {companyHref ? (
+        <Link as={"h3"} href={companyHref} target={"_blank"}>
+          {companyName}
+        </Link>
+      ) : (
+        <h3>{companyName}</h3>
+      )}
       <p>{description}</p>
     </div>
   );

@@ -2,23 +2,18 @@ import type { HTMLAttributes } from "react";
 import Portrait from "../components/portrait";
 import { twMerge } from "tailwind-merge";
 import CTA from "../components/cta";
-
-export default function Hero(props: HTMLAttributes<HTMLDivElement>) {
+import H1 from "../components/h1";
+import Section from "../components/section";
+import "./hero.css";
+export default function Hero(props: HTMLAttributes<HTMLElement>) {
   return (
-    <section
+    <Section
       {...props}
-      className={twMerge(
-        "flex flex-col-reverse  with-bottom-separator lg:flex-row lg:gap-16",
-        props.className
-      )}
+      className={twMerge("hero-section with-bottom-separator", props.className)}
     >
-      <div className="flex flex-col justify-center lg:max-w-1/2 lg:min-w-[35.5rem]">
-        <h1 className="text-dark-shade">
-          Hi I am <span className="rainbow-text">Aymen Brahim</span>
-        </h1>
-        <h2 className="text-main-brand font-tertiary font-black text-2xl uppercase tracking-wide m-0 text-shadow-none">
-          A Fullstack developer
-        </h2>
+      <div className="card">
+        <H1 />
+        <h2>A Fullstack Developer</h2>
 
         <p>
           Passionate about crafting pixel-perfect UIs that result in engaging,
@@ -30,13 +25,9 @@ export default function Hero(props: HTMLAttributes<HTMLDivElement>) {
         </p>
         <CTA className="lg:justify-start" />
       </div>
-      <div className="md:grow ">
-        <Portrait
-          className="grow max-h-96 mx-auto text-orange drop-shadow-xl w-full
-       lg:max-h-full  lg:max-w-xl aspect-square 
-      "
-        />
+      <div className="portrait-container">
+        <Portrait />
       </div>
-    </section>
+    </Section>
   );
 }

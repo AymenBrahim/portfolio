@@ -1,0 +1,44 @@
+@reference "../App.css";
+
+@layer components {
+  .project-view {
+    @apply w-full flex flex-col gap-10;
+    h3 {
+      @apply leading-none;
+    }
+
+    .hero {
+      @apply flex flex-row flex-wrap justify-between gap-x-20 gap-y-4 pb-4 border-b-1 border-foreground/10;
+    }
+
+    .links-block {
+      @apply flex flex-col;
+      & > h5 {
+        @apply w-fit;
+      }
+
+      & > .link-container {
+        @apply flex gap-4;
+        & > .button {
+          @apply inline-flex w-fit items-center gap-2 p-2.5;
+
+          & > .link-icon {
+            @apply size-5;
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .project-view {
+      @apply gap-8;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .project-view {
+      @apply gap-4;
+    }
+  }
+}

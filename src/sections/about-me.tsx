@@ -1,15 +1,17 @@
 import type { HTMLAttributes } from "react";
-import Skills from "../components/skills";
 import { twMerge } from "tailwind-merge";
+import Skills from "../components/skills";
+import Section from "../components/section";
 
 export default function AboutMe(props: HTMLAttributes<HTMLDivElement>) {
   return (
-    <section
+    <Section
       {...props}
-      className={twMerge("bg-dark-shade text-light-shade", props.className)}
+      className={twMerge("", props.className)}
+      headline="About me"
+      deck="Building digital experiences that bridge design and engineering"
     >
-      <h2>About me</h2>
-      <p>
+      <p className="mini-card">
         My journey into software development began with a curiosity about how
         the web works and quickly grew into a passion for creating meaningful
         digital experiences. Over the years, I've had the opportunity to work on
@@ -21,8 +23,6 @@ export default function AboutMe(props: HTMLAttributes<HTMLDivElement>) {
         at the gym, and constantly looking for ways to grow both personally and
         professionally.
       </p>
-      <h2 className="mt-2.5 md:mt-3 lg:mt-4">My skill set</h2>
-      <Skills />
-    </section>
+    </Section>
   );
 }

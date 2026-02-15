@@ -10,7 +10,6 @@ import {
 import { twMerge } from "tailwind-merge";
 import { professionalProjectsData, waypointsData } from "../data";
 import { calculateAngle, clamp, mapValue } from "../utils";
-import { useCarouselScrollProgress } from "../hooks";
 //add class merge to all exported components
 export type Waypoint = {
   animatedText: (withAnimation?: boolean) => ReactNode;
@@ -18,14 +17,12 @@ export type Waypoint = {
 };
 type ProjectsMapProps = {
   className?: string;
-  carouselRef: RefObject<HTMLUListElement | null>;
+  pageProgress: SpringValue<number>;
 };
 
 export default function ProjectsMap(props: ProjectsMapProps) {
-  const { carouselRef } = props;
+  const { className, pageProgress } = props;
   const pathRef = useRef<SVGPathElement>(null);
-  const page = useCarouselScrollProgress(carouselRef);
-  const pageProgress = new SpringValue(page);
   const cursorPosition = getCursorPosition(pathRef, pageProgress);
   const cursor = (
     <>
@@ -56,7 +53,7 @@ export default function ProjectsMap(props: ProjectsMapProps) {
   const waypoints = waypointsData.map(
     (
       { dashoffset, svgText, svgTextTranslateX, svgTextTranslateY },
-      waypointIndex
+      waypointIndex,
     ) => ({
       dashoffset,
       animatedText: (withAnimation = false) => {
@@ -78,17 +75,14 @@ export default function ProjectsMap(props: ProjectsMapProps) {
             }
             translateX={svgTextTranslateX}
             translateY={svgTextTranslateY}
-
-            /* fontSize={getFontsize(waypointIndex)} */
-            /* onClick={() => goToPage(waypointIndex)} */
           />
         );
       },
-    })
+    }),
   );
   return (
     <Map
-      {...props}
+      className={className}
       waypoints={waypoints}
       cursor={cursor}
       pathRef={pathRef}
@@ -117,8 +111,8 @@ function Map({
   return (
     <div
       className={twMerge(
-        "relative text-popover-foreground max-h-[80vh] ease-linear duration-500",
-        className
+        "relative max-h-[80vh] ease-out duration-250",
+        className,
       )}
     >
       <svg
@@ -200,7 +194,7 @@ function AnimatedText(props: AnimatedTextProps) {
       <animated.text
         x={x}
         y={y}
-        className={`text-[2.5px] font-bold text-dark-accent shadow-popover font-secondary lg:cursor-pointer`}
+        className={`text-[2.5px] font-bold shadow-popover font-secondary lg:cursor-pointer`}
         style={{
           opacity,
           translateX,
@@ -235,14 +229,14 @@ function getCurrentStrokeDashoffset(currentPage: number) {
     floor,
     ceil,
     waypointsData[floor].dashoffset,
-    waypointsData[ceil].dashoffset
+    waypointsData[ceil].dashoffset,
   );
 }
 
 function getAnimatedTextPosition(
   pathRef: React.RefObject<SVGPathElement | null>,
   currentPage: SpringValue<number>,
-  waypointIndex: number
+  waypointIndex: number,
 ) {
   if (waypointIndex < waypointsData.length - 1) {
     return waypointsData[waypointIndex];
@@ -253,12 +247,12 @@ function getAnimatedTextPosition(
 
 function getCursorPosition(
   pathRef: React.RefObject<SVGPathElement | null>,
-  currentPage: SpringValue<number>
+  currentPage: SpringValue<number>,
 ) {
   const y = currentPage.to((currentPage) => {
     return (
       pathRef.current?.getPointAtLength(
-        -getCurrentStrokeDashoffset(currentPage)
+        -getCurrentStrokeDashoffset(currentPage),
       ).y || waypointsData[0].waypointY
     );
   });
@@ -266,7 +260,7 @@ function getCursorPosition(
   const xPos = currentPage.to((currentPage) => {
     return (
       pathRef.current?.getPointAtLength(
-        -getCurrentStrokeDashoffset(currentPage)
+        -getCurrentStrokeDashoffset(currentPage),
       ).x || waypointsData[0].waypointX
     );
   });
@@ -277,16 +271,16 @@ function getCursorPosition(
     }
     const delta = -0.1;
     const cursorPosition = pathRef.current?.getPointAtLength(
-      -getCurrentStrokeDashoffset(currentPage)
+      -getCurrentStrokeDashoffset(currentPage),
     );
     const nextPosition = pathRef.current.getPointAtLength(
-      -(getCurrentStrokeDashoffset(currentPage) + delta)
+      -(getCurrentStrokeDashoffset(currentPage) + delta),
     );
     const angle = calculateAngle(
       nextPosition.x,
       nextPosition.y,
       cursorPosition.x,
-      cursorPosition.y
+      cursorPosition.y,
     );
     return angle + 45;
   });
@@ -297,7 +291,7 @@ function getCursorPosition(
 function getOpacity(
   currentPage: SpringValue<number>,
   waypointIndex: number,
-  withAnimation: boolean
+  withAnimation: boolean,
 ) {
   if (waypointIndex === waypointsData.length - 1) {
     return currentPage.to((page) => {

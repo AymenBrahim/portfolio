@@ -1,226 +1,323 @@
-import { useRef, useState } from "react";
-import useHorizontalMouseDrag, {
-  type UseDragOptions as UseDragOptions,
-} from "./use-mouse-drag";
-import { scrollAsync } from "../utils";
-import { useSyncExternalStore } from "react";
-import useScroll from "./use-scroll";
+import { useEffect, useRef, useState } from "react";
+import { animateValue, type RequiredFields } from "../utils";
+import { SpringValue, useSpringValue } from "@react-spring/web";
+import usePointerType from "./use-pointer-type";
 
-/**
- * Returns carousel control utilities.
- *
- * @returns {[number, (setPage: ((currentPage: number) => number) | number) => void, number]}
- *  - **page** (`number`):
- *    Current page
- *
- *  - **setPage** (`(setPage: ((currentPage: number) => number) | number) => void`):
- *    set Page
- *
- *  - **totalPages** (`number`):
- *    The total number of pages in the carousel, calculated based on the container's width and total scrollable width.
- *
- */
-
-type Options = {
+export type UseDragOptions = {
+  scrollMultiplier?: number;
   scrollTime?: number;
+  dragStartThreshold?: number;
 };
 
-export type UseCarouselReturnType = [
-  number,
-  (getPage: ((currentPage: number) => number) | number) => Promise<void>,
-  number
-];
+export type CarouselControls = {
+  page: number;
+  setPage: (page: number) => Promise<void>;
+  pageProgress: SpringValue<number>;
+};
 
-export default function useCarousel<T extends HTMLElement = HTMLDivElement>(
-  ref: React.RefObject<T | null>,
-  options?: UseDragOptions<T> & Options
-) {
-  const scrollTime = options?.scrollTime ?? 250;
-  const initialPage = ref.current
-    ? Math.round(
-        ref.current.scrollLeft / ref.current.getBoundingClientRect().width
-      )
-    : 0;
+export default function useCarouselControls(
+  ref: React.RefObject<HTMLUListElement | null>,
+  options?: UseDragOptions,
+): CarouselControls {
+  const defaultDragOptions = {
+    scrollMultiplier: 1,
+    dragStartThreshold: 5,
+    scrollTime: 200,
+  } as const satisfies RequiredFields<
+    UseDragOptions,
+    "dragStartThreshold" | "scrollMultiplier" | "scrollTime"
+  >;
 
-  const [page, setPage] = useState(initialPage);
-  const [isSliding, setIsSliding] = useState(false);
-  const pageRef = useRef(initialPage);
-
-  useScroll(ref, () => {
-    if (!ref.current) {
-      return;
-    }
-    if (!window.matchMedia("(pointer: coarse)").matches) {
-      return;
-    }
-
-    const container = ref.current;
-
-    const carouselWidth = container.getBoundingClientRect().width;
-    const page = container.scrollLeft / carouselWidth;
-
-    if (Math.abs(page - Math.round(page)) < 0.05) {
-      container.classList.remove("isDragging");
-      return;
-    }
-
-    container.classList.add("isDragging");
-    console.log("scrolling");
-  });
-
-  const scrollToCarouselPage = async (
-    getPage: ((currentPage: number) => number) | number,
-    pageScrollTime = scrollTime
-  ) => {
-    if (isSliding) {
-      return;
-    }
-    const container = ref.current;
-
-    if (!container) return;
-
-    const carouselWidth = container.getBoundingClientRect().width;
-    const currentPage = Math.round(container.scrollLeft / carouselWidth);
-    const pageCount = Math.round(container.scrollWidth / carouselWidth);
-    const nextPage =
-      typeof getPage === "function" ? getPage(currentPage) : getPage;
-
-    if (nextPage < 0 || nextPage >= pageCount) return;
-    setIsSliding(true);
-    container.classList.add("isDragging");
-    container.parentElement!.classList.add("[&>*]:cursor-wait");
-    /* const controls = document.querySelectorAll(".carousel .control");
-    controls.forEach((control) => control.classList.add("cursor-wait")); */
-
-    container.classList.remove("snap-x");
-    await scrollAsync(
-      nextPage * carouselWidth,
-      pageScrollTime,
-      container.scrollLeft,
-      (value) => (container.scrollLeft = value)
-    );
-
-    container.classList.remove("isDragging");
-    container.parentElement!.classList.remove("[&>*]:cursor-wait");
-
-    container.classList.add("snap-x");
-    setIsSliding(false);
-    pageRef.current = nextPage;
-    setPage(nextPage);
+  const { dragStartThreshold, scrollMultiplier, scrollTime } = {
+    ...defaultDragOptions,
+    ...options,
   };
 
-  const onDragEnd: (
-    velocity: number,
-    acceleration: number
-  ) => Promise<void> = async (velocity: number, acceleration: number) =>
-    new Promise((res) => {
-      const container = ref.current;
+  const pointerType = usePointerType();
 
-      if (!container) {
+  const frameRef = useRef<number | null>(null);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
+  const lastXRef = useRef(0);
+  const lastTimeRef = useRef(0);
+  const velocityRef = useRef(0);
+  const containerCache = useRef<{
+    offsetLeft: number;
+    width: number;
+    childCount: number;
+  } | null>(null);
+
+  const pointerIdRef = useRef<number | null>(null);
+  const targetRef = useRef<EventTarget | null>(null);
+  const pageRef = useRef(0);
+  const [page, setPage] = useState(0);
+  const pageProgress = useSpringValue(0);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    function onPointerDown(this: HTMLUListElement, e: PointerEvent) {
+      this.classList.add("pointer-down");
+      containerCache.current = {
+        width: this.getBoundingClientRect().width,
+        offsetLeft: this.offsetLeft,
+        childCount: this.children.length,
+      };
+
+      targetRef.current = e.target;
+
+      startXRef.current = e.clientX;
+      scrollLeftRef.current = this.scrollLeft;
+
+      this.setPointerCapture(e.pointerId);
+      pointerIdRef.current = e.pointerId;
+
+      lastXRef.current = e.clientX;
+      lastTimeRef.current = performance.now();
+    }
+
+    function onPointerMove(this: HTMLUListElement, e: PointerEvent) {
+      if (frameRef.current) return;
+
+      if (!this.classList.contains("pointer-down")) {
         return;
       }
 
-      const carouselWidth = container.getBoundingClientRect().width;
-      const page = Math.round(container.scrollLeft / carouselWidth);
-
-      const reachedXThreshhold = page !== pageRef.current;
-      const reachedVThreshhold = Math.abs(velocity) > 0.12;
-
-      const SCROLL_TIME = 200;
-
-      if (reachedXThreshhold) {
-        scrollToCarouselPage(() => page, SCROLL_TIME).then(res);
-      } else if (reachedVThreshhold) {
-        const delta = velocity < 0 ? 1 : -1;
-        scrollToCarouselPage(() => page + delta, SCROLL_TIME).then(res);
-      } else {
-        scrollToCarouselPage(() => pageRef.current, SCROLL_TIME).then(res);
+      if (!this.classList.contains("is-dragging")) {
+        const distanceMoved = Math.abs(startXRef.current - e.clientX);
+        if (distanceMoved > dragStartThreshold) {
+          this.classList.add("is-dragging");
+        }
+        return;
       }
-    });
 
-  const onLoad = (container: T) => {
-    const isPointerCoarse = window.matchMedia("(pointer: coarse)").matches;
-    if (isPointerCoarse) {
-      container.classList.add(
-        "snap-x",
-        "snap-mandatory",
-        "no-scrollbar",
-        "[&>li]:snap-always",
-        "[&>li]:snap-center"
-      );
-      container.classList.remove(
-        "cursor-grab",
-        "[.isDragging]:cursor-grabbing"
-      );
-    } else {
-      container.classList.remove(
-        "snap-x",
-        "snap-mandatory",
-        "[&>li]:snap-always",
-        "[&>li]:snap-center"
-      );
-      container.classList.add(
-        "cursor-grab",
-        "no-scrollbar",
-        "[.isDragging]:cursor-grabbing"
-      );
+      frameRef.current = requestAnimationFrame(() => {
+        frameRef.current = null;
+        const scroll = e.clientX - startXRef.current;
+
+        const now = performance.now();
+        const deltaTime = now - lastTimeRef.current;
+
+        if (deltaTime > 0) {
+          const newVelocity = (e.clientX - lastXRef.current) / deltaTime;
+          if (isFinite(newVelocity)) {
+            velocityRef.current = newVelocity;
+          }
+        }
+
+        lastXRef.current = e.clientX;
+        lastTimeRef.current = now;
+
+        const pageProgressFloat =
+          (scrollLeftRef.current - scroll * scrollMultiplier) /
+          containerCache.current!.width;
+        if (this.classList.contains("is-dragging")) {
+          this.scrollLeft = scrollLeftRef.current - scroll * scrollMultiplier;
+          pageProgress.set(pageProgressFloat);
+          if (pageProgressFloat < 0 && pageProgressFloat > -1) {
+            (this.children.item(0)! as HTMLElement).style.translate =
+              -pageProgressFloat * 20 + "%";
+          }
+
+          const childCount = containerCache.current!.childCount;
+          const extraScroll = childCount - pageProgressFloat;
+
+          if (extraScroll > 0 && extraScroll < 1) {
+            (
+              this.children.item(childCount - 1)! as HTMLElement
+            ).style.translate = extraScroll * 20 - 20 + "%";
+          }
+        }
+      });
     }
-  };
 
-  useHorizontalMouseDrag<T>(ref, {
-    ...options,
-    onLoad,
-    onDragEnd,
-  });
+    const onPointerUp = async (e: PointerEvent) => {
+      const container = ref.current;
 
-  if (!ref.current) {
-    return [0, scrollToCarouselPage, 0] as const;
-  }
-  const carouselWidth = ref.current.getBoundingClientRect().width;
-  const pageCount = Math.round(ref.current!.scrollWidth / carouselWidth);
+      if (!container) return;
 
-  return [page, scrollToCarouselPage, pageCount] as const;
-}
+      if (!container.classList.contains("is-dragging")) {
+        (targetRef.current as HTMLElement)?.dispatchEvent(
+          new PointerEvent("click", e),
+        );
+        reset();
+        return;
+      }
 
-// subscribe to scroll events
-function createSubscription(ref: React.RefObject<HTMLElement | null>) {
-  if (!ref.current) {
-    return function subscribe(callback: () => void) {
-      return callback;
+      const carouselWidth = containerCache.current!.width;
+      const currentPageProgress = container.scrollLeft / carouselWidth;
+
+      let nextPage = 0;
+
+      const reachedXThreshold =
+        Math.round(currentPageProgress) !== pageRef.current;
+
+      const currentVelocity = velocityRef.current;
+      const reachedVThreshold = Math.abs(currentVelocity) > 0.05;
+
+      if (reachedXThreshold) {
+        nextPage = Math.round(currentPageProgress);
+      } else if (reachedVThreshold) {
+        const currentPage = Math.round(currentPageProgress);
+        nextPage = currentPage + (currentVelocity < 0 ? 1 : -1);
+      } else {
+        nextPage = Math.round(currentPageProgress);
+      }
+
+      const maxPage = containerCache.current!.childCount - 1;
+      nextPage = Math.max(0, Math.min(nextPage, maxPage));
+      container.classList.add("is-scrolling");
+      reset();
+
+      await animateValue(
+        nextPage * carouselWidth,
+        scrollTime * Math.abs(currentPageProgress - nextPage),
+        container.scrollLeft,
+        (value) => {
+          container.scrollLeft = value;
+          pageProgress.set(value / containerCache.current!.width);
+        },
+      );
+      container.classList.remove("is-scrolling");
+
+      pageRef.current = nextPage;
+      setPage(nextPage);
     };
-  }
-  return function subscribe(callback: () => void) {
-    const controller = new AbortController();
-    ref.current!.addEventListener("scroll", callback, {
-      passive: true,
-      signal: controller.signal,
-    });
 
-    return () => controller.abort();
-  };
-}
+    const reset = () => {
+      const container = ref.current;
+      if (!container) {
+        return;
+      }
+      if (pointerIdRef.current !== null) {
+        container.releasePointerCapture(pointerIdRef.current);
+      }
+      container.classList.remove("pointer-down");
+      container.classList.remove("is-dragging");
+      (container.children.item(0)! as HTMLElement).style.translate = "0";
+      (
+        container.children.item(container.children.length - 1)! as HTMLElement
+      ).style.translate = "0";
 
-function createSnapshotGetter(ref: React.RefObject<HTMLElement | null>) {
-  if (!ref.current) {
-    return function getSnapshot() {
-      return 0;
+      pointerIdRef.current = null;
+      targetRef.current = null;
     };
-  }
-  return function getSnapshot() {
-    const container = ref.current!;
+
+    function onClick(this: HTMLUListElement, e: globalThis.MouseEvent) {
+      if (this.classList.contains("is-dragging")) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }
+
+    function onScroll(this: HTMLUListElement) {
+      if (
+        (pointerType === "fine" && this.classList.contains("is-dragging")) ||
+        this.classList.contains("is-scrolling")
+      ) {
+        return;
+      }
+      requestAnimationFrame(() => {
+        if (pointerType === "coarse") {
+          this.classList.add("is-dragging");
+        }
+        const width = this.getBoundingClientRect().width;
+        const scrollLeft = this.scrollLeft;
+
+        const progress = scrollLeft / width;
+        pageProgress.set(progress);
+
+        if (progress === Math.round(progress)) {
+          setPage(progress);
+          if (pointerType === "coarse") {
+            this.classList.remove("is-dragging");
+          }
+        }
+      });
+    }
+
+    function onPointerDownCoarse(this: HTMLElement, e: PointerEvent) {
+      containerCache.current = {
+        width: this.getBoundingClientRect().width,
+        offsetLeft: this.offsetLeft,
+        childCount: this.children.length,
+      };
+    }
+
+    const container = ref.current;
+    if (container) {
+      if (pointerType === "fine") {
+        container.addEventListener("pointerdown", onPointerDown, {
+          signal: controller.signal,
+        });
+        container.addEventListener("pointermove", onPointerMove, {
+          signal: controller.signal,
+          passive: false,
+          capture: true,
+        });
+        container.addEventListener("click", onClick, {
+          signal: controller.signal,
+        });
+        document.addEventListener("pointerup", onPointerUp, {
+          signal: controller.signal,
+        });
+      }
+      if (pointerType === "coarse") {
+        container.addEventListener("pointerdown", onPointerDownCoarse, {
+          signal: controller.signal,
+        });
+      }
+      container.addEventListener("scroll", onScroll, {
+        signal: controller.signal,
+      });
+    }
+
+    return () => {
+      controller.abort();
+    };
+  }, [
+    dragStartThreshold,
+    pageProgress,
+    pointerType,
+    ref,
+    scrollMultiplier,
+    scrollTime,
+  ]);
+
+  async function setPageFunction(page: number) {
+    const container = ref.current;
+    if (!container) return;
+
+    const maxPage = container.children.length - 1;
+    if (page > maxPage || page < 0) {
+      return;
+    }
+
+    if (pointerType === "coarse") {
+      container.classList.remove("pointer-coarse:snap-x");
+    }
+    container.classList.add("is-scrolling");
 
     const carouselWidth = container.getBoundingClientRect().width;
-    const currentPage = container.scrollLeft / carouselWidth;
-    return currentPage;
-  };
-}
+    await animateValue(
+      page * carouselWidth,
+      scrollTime,
+      container.scrollLeft,
+      (value) => {
+        container.scrollLeft = value;
+        pageProgress.set(container.scrollLeft / carouselWidth);
+      },
+    );
 
-export function useCarouselScrollProgress(
-  ref: React.RefObject<HTMLElement | null>
-) {
-  return useSyncExternalStore(
-    createSubscription(ref),
-    createSnapshotGetter(ref),
-    () => 0
-  );
+    if (pointerType === "coarse") {
+      container.classList.add("pointer-coarse:snap-x");
+    }
+    container.classList.remove("is-scrolling");
+
+    setPage(page);
+  }
+  return {
+    page,
+    setPage: setPageFunction,
+    pageProgress,
+  };
 }

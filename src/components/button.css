@@ -1,37 +1,96 @@
 @reference "../App.css";
 @layer components {
   .button {
-    @apply inline-block font-secondary font-black rounded-lg w-fit drop-shadow-lg;
-
-    @apply p-[0.875rem_1.25rem_0.75rem_1.125rem] text-sm;
-    @apply md:p-[1rem_1.375rem_0.875rem_1.25rem] md:text-base;
-    @apply lg:p-[1.125rem_1.4544rem_1rem_1.4206rem] lg:text-lg;
+    @apply inline-block font-secondary font-bold rounded-lg w-fit drop-shadow-lg py-3.5 px-4 leading-none transition-all ease-in duration-100 align-bottom;
 
     &:hover {
       @apply outline-1;
     }
+    &:focus {
+      @apply outline-2;
+    }
 
     &.primary {
-      @apply bg-main-brand text-white;
-
+      @apply text-white outline-rose-400/0 bg-rose-400 drop-shadow-rose-400/20;
       &:hover {
-        @apply outline-main-brand/75;
+        @apply outline-rose-400/75 drop-shadow-rose-400/35;
+      }
+      &:focus {
+        @apply outline-rose-300;
+      }
+      &:active {
+        @apply outline-rose-200;
       }
     }
 
     &.secondary {
-      @apply bg-dark-accent text-white;
+      @apply text-white text-shadow-md outline-teal-400/0 bg-teal-400 drop-shadow-teal-400/20;
 
       &:hover {
-        @apply outline-dark-accent/75;
+        @apply outline-teal-400/75 drop-shadow-teal-400/35;
+      }
+
+      &:focus {
+        @apply outline-teal-300;
+      }
+
+      &:active {
+        @apply outline-teal-200;
       }
     }
 
     &.tertiary {
-      @apply border-1 border-white/30 bg-transparent;
+      @apply border border-foreground/20 text-foreground/80 font-medium drop-shadow-foreground/30;
 
       &:hover {
-        @apply outline-white/60;
+        @apply border-foreground/20 text-background bg-foreground;
+      }
+    }
+  }
+
+  html.dark {
+    .button {
+      &.primary {
+        @apply bg-rose-500 
+         outline-rose-500/0 
+         drop-shadow-rose-500/25;
+
+        &:hover {
+          @apply outline-rose-400/70 drop-shadow-rose-400/30;
+        }
+
+        &:focus {
+          @apply outline-rose-300;
+        }
+
+        &:active {
+          @apply outline-rose-200;
+        }
+      }
+
+      &.secondary {
+        @apply bg-teal-500 
+         outline-teal-500/0 
+         drop-shadow-teal-500/25;
+
+        &:hover {
+          @apply outline-teal-400/70 drop-shadow-teal-400/30;
+        }
+
+        &:focus {
+          @apply outline-teal-300;
+        }
+
+        &:active {
+          @apply outline-teal-200;
+        }
+      }
+      &.tertiary {
+        @apply border border-beige-100/20 text-beige-100/80 drop-shadow-beige-100/20 shadow-beige-100/5 shadow-md;
+
+        &:hover {
+          @apply border-gray/10 text-gray bg-beige-100 shadow-none drop-shadow-beige-100/25;
+        }
       }
     }
   }

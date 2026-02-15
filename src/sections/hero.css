@@ -1,0 +1,83 @@
+@reference "../App.css";
+@layer components {
+  .hero-section {
+    @apply flex items-center flex-row gap-16 h-full;
+
+    & > .card {
+      @apply flex flex-col justify-center max-w-1/2 min-w-lg p-10;
+
+      & > h2 {
+        @apply font-medium tracking-wider m-0 text-shadow-none text-2xl mt-1;
+      }
+
+      & > p {
+        @apply mt-2;
+      }
+    }
+
+    & > .portrait-container {
+      @apply mx-auto text-beige-300/80 backdrop-blur-md  w-full
+         max-w-xl;
+      & > .portrait {
+        @apply size-full  max-w-full max-h-full;
+
+        & > path {
+          @apply drop-shadow-black/40 drop-shadow-xl;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .hero-section {
+      @apply flex flex-col-reverse justify-end  gap-16 h-full pb-12;
+
+      & > .card {
+        @apply flex-col justify-center max-w-3/4 min-w-auto p-8;
+
+        & > h2 {
+          @apply mt-0;
+        }
+
+        & > p {
+          @apply mt-1;
+        }
+      }
+
+      & > .portrait-container {
+        max-width: min(20rem, 50%);
+      }
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero-section {
+      @apply flex flex-col-reverse justify-end  gap-16 h-full box-border pb-12;
+
+      & > .card {
+        @apply flex flex-col justify-center max-w-max p-6;
+
+        & > h2 {
+          @apply mt-0;
+        }
+
+        & > p {
+          @apply mt-1;
+        }
+      }
+
+      & > .portrait-container {
+        max-width: min(275px, 75%);
+      }
+    }
+  }
+
+  html.dark {
+    .hero-section > .portrait-container {
+      @apply text-gray-300/75;
+      path {
+        @apply drop-shadow-beige-100/20;
+      }
+    }
+  }
+}

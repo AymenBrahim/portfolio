@@ -1,0 +1,174 @@
+@reference "../App.css";
+@layer components {
+  .tab-view {
+    @apply flex bg-beige-300 rounded-l-xl rounded-r-2xl w-full;
+    nav,
+    li,
+    ul {
+      all: unset;
+    }
+    nav {
+      @apply border-2 p-8  border-beige-400  rounded-l-xl ring-1 ring-beige-950/35 shadow-xl shadow-foreground/15;
+    }
+
+    ul {
+      @apply rounded-l-md;
+    }
+
+    li {
+      & > button {
+        @apply flex w-full gap-1 items-end justify-between font-secondary whitespace-nowrap tracking-wider transition-all duration-100 ease-in  font-extrabold  cursor-pointer leading-none  rounded-md outline-beige-950/80;
+        font-size: 0.8em;
+        padding: 1em 1.33em;
+
+        & > .expand-icon {
+          @apply size-4 -rotate-90 transition-all ease-in duration-100;
+        }
+      }
+
+      &.active > button {
+        @apply cursor-default;
+      }
+
+      &:hover > button,
+      &.active > button {
+        @apply outline-1  bg-beige-400 text-rose;
+        & > .expand-icon {
+          @apply translate-x-1;
+        }
+      }
+    }
+    ul:has(li:not(.active):hover) li.active > button {
+      @apply bg-transparent outline-0 text-foreground;
+      & > .expand-icon {
+        @apply translate-x-0;
+      }
+    }
+
+    .tab-panel {
+      @apply grid gap-12 px-10 py-8 -ml-3 border-l-beige-950/50  overflow-hidden;
+      grid-template-columns: repeat(var(--items-count, 0), 100%);
+      grid-auto-flow: dense;
+
+      & > div {
+        @apply opacity-0;
+      }
+      & > div.active {
+        @apply opacity-100 transition-all ease-in;
+
+        grid-column: 1;
+        grid-row: 1;
+      }
+    }
+  }
+
+  @supports (d: path("M0 0")) {
+    .tab-view {
+      ul:has(li:not(.active):hover) li.active > button > .expand-icon > path {
+        d: var(--expand-icon-default-path);
+      }
+
+      li.active > button > .expand-icon > path {
+        d: var(--expand-icon-expanded-path);
+      }
+    }
+  }
+
+  @supports not (d: path("M0 0")) {
+    .tab-view {
+      ul:has(li:not(.active):hover) li.active > button > .expand-icon > path {
+        &#default {
+          @apply opacity-100;
+        }
+        &#expanded {
+          @apply opacity-0;
+        }
+      }
+
+      li.active > button > .expand-icon > path {
+        &#default {
+          @apply opacity-0;
+        }
+        &#expanded {
+          @apply opacity-100;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .tab-view {
+      @apply flex flex-col;
+
+      nav {
+        @apply px-2 pb-4 pt-2 -mb-2 rounded-b-none rounded-t-xl;
+      }
+
+      ul {
+        @apply grid;
+        grid-template-columns: repeat(var(--items-count, 0), 1fr);
+      }
+
+      li {
+        button {
+          & > .expand-icon {
+            @apply rotate-0 -translate-y-0.5;
+          }
+        }
+        &:hover > button,
+        &.active > button {
+          & > .expand-icon {
+            @apply translate-0;
+          }
+        }
+      }
+
+      ul:has(li:not(.active):hover) li.active > button {
+        @apply bg-transparent outline-0 text-foreground;
+        & > .expand-icon {
+          @apply translate-x-0;
+        }
+      }
+
+      .tab-panel {
+        @apply ml-0;
+      }
+    }
+  }
+  @media (max-width: 640px) {
+    .tab-view {
+      ul[data-items-count="4"] {
+        @apply grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  }
+
+  html.dark {
+    .tab-view {
+      @apply flex bg-beige-100/10;
+
+      nav {
+        @apply ring-beige-100/20 ring-2 shadow-beige-50/5 bg-transparent  border-gray-500;
+      }
+
+      li {
+        & > button {
+          @apply outline-beige-300/50;
+        }
+        &:hover > button,
+        &.active > button {
+          @apply outline-1  bg-beige-300/5 text-rose;
+        }
+      }
+
+      ul:has(li:not(.active):hover) li.active > button {
+        @apply text-beige-200;
+      }
+
+      .tab-panel {
+        @apply bg-gray border-l-gray-900;
+      }
+    }
+  }
+}

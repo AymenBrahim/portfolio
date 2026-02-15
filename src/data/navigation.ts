@@ -17,13 +17,16 @@ export const navigationData: NavigationItem[] = [
     targetId: "about-me",
   },
   {
+    label: "Skills",
+    targetId: "skills",
+  },
+  {
     label: "Projects",
+    targetId: "projects",
     children: [
       {
         label: "Professional Projects",
-        children: professionalProjectsData
-          .slice(0, professionalProjectsData.length - 1)
-          .map((project) => ({
+        children: professionalProjectsData.map((project) => ({
             label: project.title,
             targetId: project.id,
           })),

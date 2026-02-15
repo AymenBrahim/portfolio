@@ -1,0 +1,76 @@
+@reference "../App.css";
+@layer components {
+  .expand-icon {
+    --expand-icon-expanded-path: path(
+      "M 480 544 C 515.3 544 544 515.3 544 480 C 544 373.333 544 266.667 544 160 C 544 124.7 515.3 96 480 96 L 160 96 C 124.7 96 96 124.7 96 160 C 96 266.667 96 373.333 96 480 C 96 515.3 124.7 544 160 544 L 320 544 L 480 544 C 480 544 480 544 480 544 M 320 416 C 313.3 416 307 413.2 302.4 408.3 L 198.4 296.3 C 191.9 289.3 190.2 279.1 194 270.4 C 197.8 261.7 206.5 256 216 256 L 424 256 C 433.5 256 442.2 261.7 446 270.4 C 449.8 279.1 448.1 289.3 441.6 296.3 L 337.6 408.3 C 333.1 413.2 326.7 416 320 416 L 320 416"
+    );
+    --expand-icon-default-path: path(
+      "M 343.1 438.6 C 385.767 395.933 428.433 353.267 471.1 310.6 C 480.3 301.4 483 287.7 478 275.7 C 473 263.7 461.4 256 448.5 256 L 192.5 256 C 179.6 256 167.9 263.8 162.9 275.8 C 157.9 287.8 160.7 301.5 169.9 310.6 C 212.567 353.267 255.233 395.933 297.9 438.6 L 300.3 440.8 L 300.3 440.8 C 312.9 451 331.4 450.3 343.1 438.6 M 319.625 325.375 C 319.625 325.375 319.625 325.375 319.625 325.375 L 319.625 325.375 C 319.625 325.375 319.625 325.375 319.625 325.375 C 319.625 325.375 319.625 325.375 319.625 325.375 L 319.625 325.375 C 319.625 325.375 319.625 325.375 319.625 325.375 C 319.625 325.375 319.625 325.375 319.625 325.375 L 319.625 325.375 C 319.625 325.375 319.625 325.375 319.625 325.375 L 319.625 325.375"
+    );
+    @apply fill-current;
+
+    & > path {
+      @apply transition-all ease-in duration-200;
+    }
+  }
+
+  @supports (d: path("M0 0")) {
+    .expand-icon > path#expanded {
+      @apply hidden;
+    }
+
+    @media not (hover: none) {
+      :hover > .expand-icon > path#default {
+        d: var(--expand-icon-expanded-path);
+      }
+    }
+    .expand-icon.expanded > path#default {
+      d: var(--expand-icon-expanded-path);
+    }
+    .expand-icon.retracted > path#default {
+      d: var(--expand-icon-default-path);
+    }
+  }
+
+  @supports not (d: path("M0 0")) {
+    .expand-icon > path {
+      @apply transition-all ease-in opacity-100;
+    }
+
+    .expand-icon > path#expanded {
+      @apply opacity-0;
+    }
+
+    @media not (hover: none) {
+      :hover > .expand-icon {
+        & > path#default {
+          @apply opacity-0;
+        }
+
+        & > path#expanded {
+          @apply opacity-100;
+        }
+      }
+    }
+
+    .expand-icon.expanded {
+      & > path#default {
+        @apply opacity-0;
+      }
+
+      & > path#expanded {
+        @apply opacity-100;
+      }
+    }
+
+    .expand-icon.retracted {
+      & > path#default {
+        @apply opacity-100;
+      }
+
+      & > path#expanded {
+        @apply opacity-0;
+      }
+    }
+  }
+}

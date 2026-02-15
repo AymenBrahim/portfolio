@@ -1,15 +1,15 @@
 import type { HTMLAttributes } from "react";
-import { twMerge } from "tailwind-merge";
 import CollaborationParagraph from "../components/collaboration-paragraph";
+import Section from "../components/section";
 
 export default function Collaborate(props: HTMLAttributes<HTMLDivElement>) {
   return (
-    <section
+    <Section
       {...props}
-      className={twMerge("bg-light-shade text-dark-shade", props.className)}
+      headline="Let's Work Together"
+      deck="Available for full-time roles, freelance projects, or technical partnerships"
     >
-      <h2>Let's Work Together</h2>
-      <CollaborationParagraph />
-    </section>
+      <CollaborationParagraph className="max-sm:max-w-full min-sm:max-w-3/4 min-sm:mx-auto mt-8" />
+    </Section>
   );
 }

@@ -1,45 +1,78 @@
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type HTMLAttributes,
+  type LiHTMLAttributes,
+  type ReactNode,
+} from "react";
 import { IconInfo, IconXMark } from "./icons";
-import { twMerge } from "tailwind-merge";
 import "./skills.css";
 import { skillsData, type SkillRow } from "../data";
+import ReactDOM from "react-dom/client";
+import { twMerge } from "tailwind-merge";
 
-export default function Skills() {
-  const [state, setState] = useState({
-    isOpen: false,
-    close: () => {},
-    interacted: 0,
-  });
+export default function Skills(props: HTMLAttributes<HTMLElement>) {
+  const { className, ...rest } = props;
+  const [activeHash, setActiveHash] = useState<string>("");
+  const [root, setRoot] = useState<ReactDOM.Root | null>(null);
 
-  const openTooltip = (close: () => void) => {
-    if (state.isOpen) {
-      state.close();
+  async function toggleDetails(
+    element: ReactNode | null,
+    row: number,
+    column: number,
+  ) {
+    if (!ref.current || !element) {
+      return;
     }
-    setState((state) => ({
-      isOpen: true,
-      close,
-      interacted: state.interacted + 1,
-    }));
-  };
+    const hash = `${row}-${column}`;
+    if (hash === activeHash) {
+      return;
+    }
+    if (activeHash) {
+      await closeDetails();
+    }
+    setActiveHash(hash);
 
-  const closeTooltip = () => {
-    state.close();
-    setState((state) => ({ ...state, isOpen: false, close: () => {} }));
-  };
+    const div = document.createElement("div");
+    div.id = "tooltip-details";
+    const isSmall = window.matchMedia("(max-width: 1024px)").matches;
+    const insertIndex =
+      isSmall || row === skillsData.length - 2
+        ? row + 1
+        : row + 1 + (row % 2 == 0 ? 1 : 0);
+
+    ref.current.insertBefore(div, ref.current.children[insertIndex]);
+    const root = ReactDOM.createRoot(div);
+    root.render(element);
+    setRoot(root);
+  }
+
+  async function closeDetails() {
+    const div = document.getElementById("tooltip-details")!;
+    div.classList.add("is-dismounting");
+    return new Promise((res) => {
+      setTimeout(() => {
+        root?.unmount();
+        div.remove();
+        setActiveHash("");
+        res("true");
+      }, 25);
+    });
+  }
 
   const ref = useRef<HTMLDivElement>(null);
-  useSameTitleHeight(ref);
   return (
-    <div className="skills" ref={ref}>
+    <div {...rest} className={twMerge("skills card", className)} ref={ref}>
       {skillsData.map((row, i) => (
         <div key={row.title}>
           <h4>{row.title}:</h4>
           <Row
             skills={row.skills}
-            openTooltip={openTooltip}
-            closeTooltip={closeTooltip}
             rowIndex={i}
-            animateTooltip={state.interacted <= 2}
+            openDetails={toggleDetails}
+            closeDetails={closeDetails}
+            activeHash={activeHash}
           />
         </div>
       ))}
@@ -47,164 +80,86 @@ export default function Skills() {
   );
 }
 
-function useSameTitleHeight(ref: React.RefObject<HTMLDivElement | null>) {
-  function setMaxHeight() {
-    if (!ref.current) {
-      return;
-    }
-
-    if (window.innerWidth < 1024) {
-      ref.current.style.setProperty("--min-title-height", "auto");
-      return;
-    }
-
-    const elements = [...ref.current.children!].map(
-      (child) => child.firstChild
-    ) as HTMLElement[];
-
-    let maxHeight = elements[0].getBoundingClientRect().height;
-    elements.map(
-      (element) =>
-        element.getBoundingClientRect().height > maxHeight &&
-        (maxHeight = element.getBoundingClientRect().height)
-    );
-    ref.current.style.setProperty("--min-title-height", maxHeight + "px");
-  }
-
-  useEffect(() => {
-    setMaxHeight();
-    const controller = new AbortController();
-    window.addEventListener("resize", setMaxHeight, {
-      signal: controller.signal,
-    });
-
-    return () => controller.abort();
-  });
-}
-
 type TooltipLifeCycleProps = {
-  openTooltip: (close: () => void) => void;
-  closeTooltip: () => void;
+  openDetails: (
+    node: ReactNode,
+    row: number,
+    column: number,
+  ) => Promise<unknown>;
+  closeDetails: () => void;
+  rowIndex: number;
+  activeHash: string;
 };
 
-type RowProps = Omit<SkillRow, "title"> &
-  TooltipLifeCycleProps & { rowIndex: number; animateTooltip: boolean };
-function Row({ skills, rowIndex, ...tooltipsProps }: RowProps) {
-  const lastRow = rowIndex === skillsData.length - 1;
+type RowProps = Omit<SkillRow, "title"> & TooltipLifeCycleProps;
+function Row({ skills, ...rest }: RowProps) {
   return (
-    <div
-      className={twMerge(
-        "flex gap-8",
-        lastRow ? " last-row" : "",
-        rowIndex % 2 === 1 && !lastRow && "with-offset"
-      )}
-    >
-      <ul>
-        {skills.map((skill, i) => (
-          <Icon
-            key={"skill" + i}
-            skill={skill}
-            {...tooltipsProps}
-            rowIndex={rowIndex}
-            columnIndex={i}
-          />
-        ))}
-      </ul>
-    </div>
+    <ul>
+      {skills.map((skill, i) => (
+        <Skill key={"skill-" + i} skill={skill} {...rest} columnIndex={i} />
+      ))}
+    </ul>
   );
 }
-type IconProps = {
-  skill: SkillRow["skills"][number];
-} & TooltipLifeCycleProps & {
-    rowIndex: number;
-    columnIndex: number;
-    animateTooltip: boolean;
-  };
 
-function Icon(props: IconProps) {
+type Skill = SkillRow["skills"][number];
+type SkillProps = {
+  skill: Skill;
+  columnIndex: number;
+} & TooltipLifeCycleProps;
+
+function Skill(props: SkillProps) {
   const { skill } = props;
   if (!skill.tooltip) {
-    return (
-      <li key={skill.name} className={`text-dark-accent shrink-1 grow-0 w-fit`}>
-        <div className="text-dark-accent w-fit mx-auto  [&>svg]:size-12 md:[&>svg]:size-16">
-          {skill.icon}
-        </div>
-        <span className="block text-center text-light-shade/90 mx-auto mt-2">
-          {skill.name}
-        </span>
-      </li>
-    );
+    return <SkillHeader skill={skill} />;
   }
-  return <IconWithTooltip {...props} />;
+  return <SkillWithDetails {...props} />;
 }
 
-function IconWithTooltip(props: IconProps) {
-  const {
-    skill,
-    openTooltip,
-    closeTooltip,
-    rowIndex,
-    columnIndex,
-    animateTooltip,
-  } = props;
-  const [isOpen, setIsOpen] = useState(false);
-  const ref = useRef<HTMLLIElement>(null);
-  useEffect(() => {
-    if (rowIndex === 0 && columnIndex === 0) {
-      openTooltip(() => setIsOpen(false));
-      setIsOpen(true);
-    }
-  }, []);
+type SkillHeaderProps = {
+  skill: Skill;
+  liProps?: LiHTMLAttributes<HTMLElement>;
+};
+
+function SkillHeader(props: SkillHeaderProps) {
+  const { skill, liProps } = props;
+
+  return (
+    <li {...liProps}>
+      <div className="icon">
+        {skill.icon}
+        <IconInfo className="info-icon" />
+      </div>
+      <span className="name">{skill.name}</span>
+    </li>
+  );
+}
+
+function SkillWithDetails(props: SkillProps) {
+  const { openDetails, rowIndex, columnIndex, activeHash } = props;
+  const hash = `${rowIndex}-${columnIndex}`;
+  const isActive = hash === activeHash;
+
+  return (
+    <SkillHeader
+      {...props}
+      liProps={{
+        className: "toggle" + (isActive ? " is-active" : ""),
+        onClick: async () =>
+          await openDetails(<Details {...props} />, rowIndex, columnIndex),
+      }}
+    />
+  );
+}
+
+function Details(props: Omit<SkillProps, "openDetails">) {
+  const { skill, closeDetails } = props;
 
   return (
     <>
-      <li
-        key={skill.name}
-        className={twMerge(
-          "text-dark-accent shrink-1 grow-0 flex w-fit",
-          isOpen && "open",
-          animateTooltip && rowIndex === 0 && columnIndex === 1 && "animate"
-        )}
-        ref={ref}
-        onClick={() => {
-          if (isOpen) {
-            return;
-          }
-          openTooltip(() => setIsOpen(false));
-          setIsOpen(true);
-        }}
-      >
-        <div className="overflow-hidden relative">
-          <div>
-            <div className="icon flex w-fit mx-auto text-dark-accent  cursor-pointer  relative  [&>svg:first-child]:size-12 md:[&>svg:first-child]:size-16 ">
-              {skill.icon}
-              <IconInfo
-                className="absolute  show-tooltip-icon cursor-pointer box-content fill-light-shade
-             size-6 -top-0.5 -right-0.5
-             md:size-7 
-            "
-              />
-            </div>
-            {
-              <span
-                className={twMerge(
-                  "block text-center mx-auto mt-2",
-                  isOpen ? "text-dark-shade font-bold" : " text-light-shade/80"
-                )}
-              >
-                {skill.name}
-              </span>
-            }
-          </div>
-          <div className="tooltip  text-dark-shade">
-            {skill.tooltip}
-            <IconXMark
-              className="close-tooltip size-7 absolute top-0 right-0 cursor-pointer p-3.5 box-content fill-light-accent hover:fill-dark-accent"
-              onClick={closeTooltip}
-            />
-          </div>
-        </div>
-      </li>
+      <SkillHeader skill={skill} />
+      <p className="tooltip">{skill.tooltip}</p>
+      <IconXMark onClick={closeDetails} className="close-icon" />
     </>
   );
 }

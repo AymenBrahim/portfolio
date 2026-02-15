@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 export type Project = {
   id: string;
   title: string;
-  date: string;
   startDate: Date;
   endDate: Date;
   role: string;
@@ -30,18 +29,13 @@ export type Waypoint = {
 const withKonekto = {
   employerName: "konekto",
   employerHref: "https://konek.to/en",
-  employerLogo: (
-    <div className="bg-white p-2 box-content rounded-xs">
-      <img draggable={false} src="/icons/konekto-logo.svg" />
-    </div>
-  ),
+  employerLogo: <img draggable={false} src="/icons/konekto.svg" />,
 } as const;
 
 export const professionalProjectsData = [
   {
     id: "printmate",
     title: "Printmate",
-    date: "Aug 2022 - Oct 2022",
     startDate: new Date(2022, 7),
     endDate: new Date(2022, 9),
     role: "Software Engineer",
@@ -61,7 +55,6 @@ export const professionalProjectsData = [
   {
     id: "atlas-ti",
     title: "Atlas.ti",
-    date: "October 2022 - Dec 2022",
     startDate: new Date(2022, 9),
     endDate: new Date(2022, 11),
     role: "Software Engineer",
@@ -74,7 +67,13 @@ export const professionalProjectsData = [
       " for all these features, ensuring robust functionality and minimizing production bugs through" +
       " comprehensive test coverage.",
     projectHref: "https://atlasti.com/",
-    projectLogo: <img draggable={false} src="/icons/atlasti.png" />,
+    projectLogo: (
+      <img
+        draggable={false}
+        src="/icons/atlasti.png"
+        className="[html.dark_&]:bg-white rounded-xs"
+      />
+    ),
     projectScreen: <img draggable={false} src="/screenshots/atlas.ti.png" />,
 
     ...withKonekto,
@@ -84,7 +83,6 @@ export const professionalProjectsData = [
   {
     id: "klenico",
     title: "Klenico",
-    date: "Jan 2023 - Feb 2024",
     startDate: new Date(2023, 0),
     endDate: new Date(2024, 1),
     role: "Software Engineer",
@@ -106,7 +104,6 @@ export const professionalProjectsData = [
   {
     id: "nays",
     title: "Nays",
-    date: "Mar 2024 - Aug 2024",
     startDate: new Date(2024, 2),
     endDate: new Date(2024, 7),
     role: "Software Engineer",
@@ -127,7 +124,6 @@ export const professionalProjectsData = [
   {
     id: "ecosia",
     title: "Ecosia",
-    date: "Jan 2025",
     startDate: new Date(2025, 0),
     endDate: new Date(2025, 1),
     role: "Software Engineer",
@@ -155,8 +151,7 @@ export const professionalProjectsData = [
     projectScreen: <img draggable={false} src="/screenshots/swaf.svg" />,
     ...withKonekto,
 
-    role: "Full-Stack Developer",
-    date: "2024",
+    role: "Software Engineer",
     startDate: new Date(2024, 12),
     endDate: new Date(2025, 7),
     technologies: "Wordpress, PHP, ACF, CSS, JS",
@@ -164,7 +159,6 @@ export const professionalProjectsData = [
   {
     id: "ambivation",
     title: "Ambivation",
-    date: "Feb 2025 - Present",
     startDate: new Date(2025, 1),
     endDate: new Date(2025, 7),
     role: "Software Engineer",

@@ -1,0 +1,72 @@
+@reference "../App.css";
+@layer components {
+  .link {
+    @apply inline;
+    --underline-height: round(nearest, calc(max(1em / 30, 1px)), 1px);
+
+    & > :first-child {
+      @apply relative leading-none whitespace-nowrap inline;
+      padding-bottom: calc(2 * var(--underline-height, 0px));
+      & > * {
+        @apply leading-none;
+      }
+
+      &::after {
+        @apply content-[""] bg-current absolute left-0 bottom-0 w-full;
+        height: var(--underline-height);
+      }
+      &::before {
+        @apply content-[""] bg-current absolute left-0 w-0 ease-in duration-100 transition-all;
+        bottom: var(--underline-height);
+        height: var(--underline-height);
+      }
+
+      & > svg {
+        @apply fill-current w-auto inline size-[1em] align-middle ml-[.2em];
+
+        & > path {
+          transition: d 200ms ease-in;
+        }
+      }
+    }
+
+    &:hover {
+      > :first-child {
+        &::before {
+          @apply w-full;
+        }
+      }
+    }
+  }
+  @supports (d: path("M0 0")) {
+    .link svg > path#active {
+      @apply hidden;
+    }
+
+    .link:hover svg > path#inactive {
+      d: path(
+        "M 569 337 C 578.4 327.6 578.4 312.4 569 303.1 C 563 297.096 557 291.092 551 285.087 C 545 279.083 539 273.079 533 267.075 L 515 249.063 C 509 243.058 503 237.054 497 231.05 L 479 213.037 C 473 207.033 467 201.029 461 195.025 L 443 177.012 C 437 171.008 431 165.004 425 159 C 418.1 152.1 407.8 150.1 398.8 153.8 C 389.8 157.5 384 166.3 384 176 L 384 256 L 272 256 C 245.5 256 224 277.5 224 304 L 224 336 C 224 362.5 245.5 384 272 384 C 309.333 384 346.667 384 384 384 C 384 410.667 384 437.333 384 464 C 384 473.7 389.8 482.5 398.8 486.2 C 407.8 489.9 418.1 487.9 425 481 L 569 337 L 569 337 M 224 160 C 241.7 160 256 145.7 256 128 C 256 110.3 241.7 96 224 96 L 160 96 C 133.5 96 109.5 106.75 92.125 124.125 C 74.75 141.5 64 165.5 64 192 L 64 448 C 64 501 107 544 160 544 L 224 544 C 227.54 544 230.944 543.428 234.125 542.371 C 237.306 541.314 240.263 539.773 242.91 537.834 C 245.558 535.894 247.894 533.558 249.834 530.91 C 251.773 528.263 253.314 525.306 254.371 522.125 C 255.428 518.944 256 515.54 256 512 C 256 494.3 241.7 480 224 480 L 160 480 C 142.3 480 128 465.7 128 448 L 128 320 C 128 277.333 128 234.667 128 192 C 128 174.3 142.3 160 160 160 C 181.333 160 202.667 160 224 160 C 224 160 224 160 224 160"
+      );
+    }
+  }
+
+  @supports not (d: path("M0 0")) {
+    .link svg > path {
+      @apply transition-all ease-in opacity-100;
+    }
+
+    .link svg > path#active {
+      @apply opacity-0;
+    }
+
+    .link:hover {
+      & svg > path#inactive {
+        @apply opacity-0;
+      }
+
+      & svg > path#active {
+        @apply opacity-100;
+      }
+    }
+  }
+}

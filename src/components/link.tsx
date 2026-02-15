@@ -1,34 +1,30 @@
-import type { AnchorHTMLAttributes } from "react";
-import { ArrowUpRightFromSquare } from "./icons";
+import { type AnchorHTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
-
-type LinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
-  iconClassName?: string;
-};
-export default function Link({ children, iconClassName, ...props }: LinkProps) {
+import "./link.css";
+type LinkProps<T extends React.ElementType> =
+  AnchorHTMLAttributes<HTMLAnchorElement> & { as?: T };
+export default function Link<T extends React.ElementType = "span">({
+  children,
+  as,
+  ...props
+}: LinkProps<T>) {
+  const Component = as || "span";
   return (
-    <a
-      {...props}
-      className={twMerge(
-        props.className,
-        "flex items-center flex-nowrap lg:gap-4 md:gap-3 gap-2",
-        props.href &&
-          " hover:[&[href]>:first-child]:underline hover:[&>:nth-child(2)>:first-child]:translate-x-[7%]" +
-            " hover:[&>:nth-child(2)>:first-child]:-translate-y-[7%]" +
-            " [&:hover>:nth-child(2)]:underline [&:hover>:first-child>.arrow-upright>:first-child]:translate-x-8" +
-            " [&:hover>:first-child>.arrow-upright>:first-child]:-translate-y-8" +
-            " pointer-coarse:[&>:first-child]:underline underline-offset-[15%] pointer-coarse:[&>:nth-child(2)]:hidden"
-      )}
-    >
-      {children}
-      {props.href && (
-        <ArrowUpRightFromSquare
-          className={twMerge(
-            "inline fill-light-shade size-6 lg:size-10 sm:size-8",
-            iconClassName
-          )}
-        />
-      )}
+    <a {...props} className={twMerge("link", props.className)}>
+      <Component>
+        {children}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+          {/* <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--> */}
+          <path
+            id="inactive"
+            d="M 464 221.3 C 483.1 240.433 502.2 259.567 521.3 278.7 C 530.5 287.8 544.2 290.6 556.2 285.6 C 568.2 280.6 576 268.9 576 256 L 576 96 C 576 78.3 561.7 64 544 64 L 384 64 C 371.1 64 359.4 71.8 354.4 83.8 L 354.5 83.7 C 349.5 95.7 352.2 109.4 361.4 118.6 C 380.5 137.733 399.6 156.867 418.7 176 C 412.308 182.387 405.917 188.775 399.525 195.162 L 380.35 214.325 L 342 252.65 C 329.217 265.425 316.433 278.2 303.65 290.975 L 284.475 310.137 C 278.083 316.525 271.692 322.913 265.3 329.3 C 252.8 341.8 252.8 362.1 265.3 374.6 C 271.55 380.85 279.75 383.975 287.95 383.975 C 296.15 383.975 304.35 380.85 310.6 374.6 C 327.644 357.567 344.689 340.533 361.733 323.5 L 412.867 272.4 L 464 221.3 M 224 160 C 217.333 160 210.667 160 204 160 C 197.333 160 190.667 160 184 160 L 144 160 C 99.8 160 64 195.8 64 240 C 64 240 64 240 64 240 L 64 496 C 64 540.2 99.8 576 144 576 L 400 576 C 444.2 576 480 540.2 480 496 C 480 469.333 480 442.667 480 416 C 480 398.3 465.7 384 448 384 C 430.3 384 416 398.3 416 416 C 416 442.667 416 469.333 416 496 C 416 504.8 408.8 512 400 512 L 144 512 C 135.2 512 128 504.8 128 496 L 128 240 C 128 231.2 135.2 224 144 224 C 170.667 224 197.333 224 224 224 C 241.7 224 256 209.7 256 192 C 256 174.3 241.7 160 224 160"
+          />
+          <path
+            id="active"
+            d="M 569 337 C 578.4 327.6 578.4 312.4 569 303.1 C 563 297.096 557 291.092 551 285.087 C 545 279.083 539 273.079 533 267.075 L 515 249.063 C 509 243.058 503 237.054 497 231.05 L 479 213.037 C 473 207.033 467 201.029 461 195.025 L 443 177.012 C 437 171.008 431 165.004 425 159 C 418.1 152.1 407.8 150.1 398.8 153.8 C 389.8 157.5 384 166.3 384 176 L 384 256 L 272 256 C 245.5 256 224 277.5 224 304 L 224 336 C 224 362.5 245.5 384 272 384 C 309.333 384 346.667 384 384 384 C 384 410.667 384 437.333 384 464 C 384 473.7 389.8 482.5 398.8 486.2 C 407.8 489.9 418.1 487.9 425 481 L 569 337 L 569 337 M 224 160 C 241.7 160 256 145.7 256 128 C 256 110.3 241.7 96 224 96 L 160 96 C 133.5 96 109.5 106.75 92.125 124.125 C 74.75 141.5 64 165.5 64 192 L 64 448 C 64 501 107 544 160 544 L 224 544 C 227.54 544 230.944 543.428 234.125 542.371 C 237.306 541.314 240.263 539.773 242.91 537.834 C 245.558 535.894 247.894 533.558 249.834 530.91 C 251.773 528.263 253.314 525.306 254.371 522.125 C 255.428 518.944 256 515.54 256 512 C 256 494.3 241.7 480 224 480 L 160 480 C 142.3 480 128 465.7 128 448 L 128 320 C 128 277.333 128 234.667 128 192 C 128 174.3 142.3 160 160 160 C 181.333 160 202.667 160 224 160 C 224 160 224 160 224 160"
+          />
+        </svg>
+      </Component>
     </a>
   );
 }

@@ -1,0 +1,72 @@
+@reference "../App.css";
+@layer copmponent {
+  .experience {
+    .first-col {
+      @apply h-fit my-auto;
+      padding-top: calc(var(--disk-size) / 2 - 0.375rem);
+      & > :first-child {
+        @apply justify-self-center block mb-4;
+
+        & > img {
+          @apply size-full object-contain max-h-24 max-w-36;
+        }
+      }
+      & > :nth-child(2) {
+        h4 {
+          @apply font-tertiary tracking-tighter mb-2;
+        }
+        address {
+          @apply flex items-center gap-1 text-foreground/65 font-tertiary leading-none tracking-tight;
+          font-size: 0.85em;
+          font-style: normal;
+        }
+        address + time {
+          @apply mt-3;
+        }
+      }
+    }
+    .second-col {
+      margin-top: calc(var(--disk-size) / 2 - 0.375rem);
+      & > :first-child {
+        @apply leading-none block;
+      }
+      p {
+        @apply mt-4;
+      }
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .experience {
+      .first-col {
+        @apply flex flex-row-reverse  justify-end gap-x-8 flex-wrap gap-y-4;
+        & > :nth-child(1) {
+          @apply my-auto mx-auto;
+        }
+        & > div:nth-child(2) {
+          @apply shrink-0 min-w-fit;
+        }
+      }
+      .second-col {
+        h3 {
+          @apply leading-none;
+        }
+        p {
+          @apply mt-4;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 640px) {
+  }
+  html.dark {
+    .experience {
+      .first-col {
+        address {
+          @apply text-beige-200/65;
+        }
+      }
+    }
+  }
+}

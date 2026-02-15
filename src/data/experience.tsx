@@ -7,7 +7,7 @@ export type Experience = {
   companyLogo?: ReactNode;
   location?: string;
   description?: ReactNode;
-  role?: string;
+  role?: ReactNode;
   startDate: Date;
   endDate: Date;
 };
@@ -36,7 +36,12 @@ export const experiences = [
     id: "SQOIN",
     companyName: "SQOIN",
     companyHref: "https://sqoin.us/",
-    companyLogo: <img src="/icons/sqoin.png" />,
+    companyLogo: (
+      <img
+        src="/icons/sqoin.png"
+        className="[html.light_&]:bg-foreground p-1 rounded-sm"
+      />
+    ),
     location: "Ghazela City , Ariana",
     startDate: new Date(2021, 0),
     endDate: new Date(2021, 3),
@@ -73,25 +78,16 @@ export const experiences = [
     endDate: new Date(2022, 2),
   },
   {
-    id: "freelance",
-    companyName: "Freelance",
-    description: (
-      <>
-        Worked on various small-scale projects, delivering custom web
-        applications, integrations, and performance optimizations. Collaborated
-        with clients to build tailored solutions, including e-commerce features,
-        dashboards, and API integrations.
-      </>
-    ),
-    startDate: new Date(2020, 6),
-    endDate: new Date(),
-  },
-  {
     id: "konekto",
     companyName: "Konekto",
     companyHref: "https://konek.to/en",
     location: "Corinthstr. 63, Berlin",
-    companyLogo: <img src="/icons/konekto.png" className="bg-white p-1" />,
+    companyLogo: (
+      <img
+        src="/icons/konekto.svg"
+        className="[html.dark_&]:bg-beige-100 p-1 rounded-sm"
+      />
+    ),
     description: (
       <>
         During my time at Konekto, I worked across multiple projects in diverse
@@ -112,6 +108,41 @@ export const experiences = [
     ),
     role: "Software Engineer",
     startDate: new Date(2022, 7),
+    endDate: new Date(2025, 7),
+  },
+  {
+    id: "",
+    companyName: "Originator Inc",
+    companyLogo: <img src="/icons/originator.avif" className="p-1" />,
+
+    companyHref: "https://originator.inc/",
+    description: (
+      <>
+        Developed React interfaces for a SaaS platform generating and reviewing
+        AI agent training data, combining automated verification with
+        human-in-the-loop reviews. Built lean, task-centered UIs with Tailwind
+        CSS to optimize clarity and minimize cognitive load, while implementing
+        role-based workflows for reviewer training, task assignment, and
+        progression tracking. Collaborated cross-functionally with AI, product,
+        design, and QA teams to deliver quality front-end features
+      </>
+    ),
+    role: "Software Engineer",
+    startDate: new Date(2025, 10),
+    endDate: new Date(),
+  },
+  {
+    id: "freelance",
+    role: <span className="font-tertiary">Freelance</span>,
+    description: (
+      <>
+        Worked on various small-scale projects, delivering custom web
+        applications, integrations, and performance optimizations. Collaborated
+        with clients to build tailored solutions, including e-commerce features,
+        dashboards, and API integrations.
+      </>
+    ),
+    startDate: new Date(2020, 6),
     endDate: new Date(),
   },
 ] as const satisfies Experience[];
