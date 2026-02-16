@@ -226,7 +226,7 @@ export default function useCarouselControls(
         const progress = scrollLeft / width;
         pageProgress.set(progress);
 
-        if (progress === Math.round(progress)) {
+        if (Math.abs(progress - Math.round(progress)) < 0.05) {
           setPage(progress);
           if (pointerType === "coarse") {
             this.classList.remove("is-dragging");

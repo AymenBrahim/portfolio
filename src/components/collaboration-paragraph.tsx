@@ -6,8 +6,8 @@ export default function CollaborationParagraph(
   props: HTMLAttributes<HTMLDivElement>,
 ) {
   return (
-    <div {...props} className={twMerge("mini-card", props.className)}>
-      <p className="mb-5 md:mb-7 lg:mb-9">
+    <div {...props} className={twMerge("", props.className)}>
+      <p className="mini-card mb-5 md:mb-7 lg:mb-9 ">
         I am enthusiastic about exploring new opportunities, bringing experience
         across modern technologies and a strong background in building scalable,
         user-focused applications. I know how to transform ideas into impactful

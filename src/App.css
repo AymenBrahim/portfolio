@@ -499,7 +499,7 @@
       }
 
       @media (max-width: 640px) {
-        @apply bg-transparent ring-0 shadow-none;
+        @apply bg-transparent ring-0 shadow-none text-beige-100;
       }
     }
   }
