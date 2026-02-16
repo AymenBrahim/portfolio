@@ -10,7 +10,7 @@
 
     & > ul {
       @apply flex flex-row size-full overflow-x-scroll pb-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
-      pointer-coarse:snap-x pointer-coarse:snap-mandatory pointer-fine:scroll-auto scroll-smooth will-change-scroll;
+      pointer-coarse:snap-x pointer-coarse:snap-mandatory pointer-coarse:snap-always pointer-fine:scroll-auto scroll-smooth will-change-scroll;
 
       &.is-dragging *,
       &.is-dragging {

@@ -216,17 +216,17 @@ export default function useCarouselControls(
       ) {
         return;
       }
+
       requestAnimationFrame(() => {
-        if (pointerType === "coarse") {
-          this.classList.add("is-dragging");
-        }
         const width = this.getBoundingClientRect().width;
         const scrollLeft = this.scrollLeft;
-
         const progress = scrollLeft / width;
-        pageProgress.set(progress);
-
-        if (Math.abs(progress - Math.round(progress)) < 0.05) {
+        if (Math.abs(progress - Math.round(progress)) > 0.01) {
+          if (pointerType === "coarse") {
+            this.classList.add("is-dragging");
+          }
+          pageProgress.set(progress);
+        } else {
           setPage(progress);
           if (pointerType === "coarse") {
             this.classList.remove("is-dragging");
