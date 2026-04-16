@@ -81,7 +81,7 @@ export const experiences = [
     id: "konekto",
     companyName: "Konekto",
     companyHref: "https://konek.to/en",
-    location: "Corinthstr. 63, Berlin",
+    location: "Berlin, Germany(remote)",
     companyLogo: (
       <img
         src="/icons/konekto.svg"
@@ -106,7 +106,7 @@ export const experiences = [
         maintainability, performance, and user experience.
       </>
     ),
-    role: "Software Engineer",
+    role: "Full Stack Engineer",
     startDate: new Date(2022, 7),
     endDate: new Date(2025, 7),
   },
@@ -127,9 +127,10 @@ export const experiences = [
         design, and QA teams to deliver quality front-end features
       </>
     ),
-    role: "Software Engineer",
-    startDate: new Date(2025, 10),
-    endDate: new Date(),
+    role: "Full Stack Engineer(freelance)",
+    location: "France(remote)",
+    startDate: new Date(2025, 9),
+    endDate: new Date(2026, 1),
   },
   {
     id: "freelance",

@@ -17,13 +17,15 @@ export default function Experience(props: HTMLAttributes<HTMLDivElement>) {
     >
       <div>
         <Timeline.Container>
-          {experiences.map((experience, i) => (
-            <Timeline.Item
-              key={i}
-              firstColumn={<FirstColumn {...experience} />}
-              secondColumn={<SecondColumn {...experience} />}
-            />
-          ))}
+          {experiences
+            .map((experience, i) => (
+              <Timeline.Item
+                key={i}
+                firstColumn={<FirstColumn {...experience} />}
+                secondColumn={<SecondColumn {...experience} />}
+              />
+            ))
+            .reverse()}
         </Timeline.Container>
       </div>
     </Section>
